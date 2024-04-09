@@ -2,10 +2,10 @@
     <div class="percentage-display">
         <div
             class="percentage"
-            :style="{ width: `${ props.percentage * 100 }%`, backgroundColor }"
+            :style="{ width, backgroundColor }"
         />
         <div class="value">
-            {{ Math.round(props.percentage * 100) }}%
+            {{ displayValue }}
         </div>
     </div>
 </template>
@@ -13,12 +13,29 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps<{
-    percentage: number;
-}>();
+const props = withDefaults(defineProps<{
+    max?: number;
+    min?: number;
+    value: number;
+}>(), {
+    max: 1,
+    min: 0
+});
+
+const width = computed(() => {
+    return `${ (props.value - props.min) / (props.max - props.min) * 100 }%`;
+});
+
+const displayValue = computed(() => {
+    if (props.max === 1) {
+        return `${ Math.round(props.value * 100) }%`;
+    }
+
+    return Math.round(props.value);
+});
 
 const backgroundColor = computed(() => {
-    return `color-mix(in lch, #0000bb ${ props.percentage * 100 }%, #990000)`;
+    return `color-mix(in lch, #0000bb ${ (props.value - props.min) / (props.max - props.min) * 100 }%, #990000)`;
 });
 </script>
 

@@ -19,11 +19,25 @@
                 <td>{{ track.name }}</td>
                 <td>{{ track.artists[0].name }}</td>
                 <td>{{ track.album.release_date }}</td>
-                <td>{{ track.popularity }}</td>
-                <td>{{ track.features.tempo }}</td>
-                <td><KPercentageDisplay :percentage="track.features.danceability" /></td>
-                <td><KPercentageDisplay :percentage="track.features.energy" /></td>
-                <td><KPercentageDisplay :percentage="track.features.valence" /></td>
+                <td>
+                    <KPercentageDisplay :value="track.popularity/100" />
+                </td>
+                <td>
+                    <KPercentageDisplay
+                        :max="200"
+                        :min="50"
+                        :value="track.features.tempo"
+                    />
+                </td>
+                <td>
+                    <KPercentageDisplay :value="track.features.danceability" />
+                </td>
+                <td>
+                    <KPercentageDisplay :value="track.features.energy" />
+                </td>
+                <td>
+                    <KPercentageDisplay :value="track.features.valence" />
+                </td>
             </tr>
         </table>
     </div>
