@@ -1,8 +1,5 @@
 <template>
-    <button
-        v-if="!accessToken"
-        @click="connect"
-    >
+    <button @click="connect">
         Connect to Spotify
     </button>
 </template>
@@ -13,6 +10,9 @@ import { getToken, requestAuthorization } from "@/lib/spotify";
 import { accessToken, authorizationCode } from "@/lib/spotify/local.ts";
 
 function connect() {
+    authorizationCode.value = "";
+    accessToken.value = "";
+
     requestAuthorization();
 }
 

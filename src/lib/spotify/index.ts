@@ -1,5 +1,6 @@
 import { base64encode, generateRandomString, sha256 } from "./lib.ts";
-import { accessToken, authorizationCode, codeVerifier } from "@/lib/spotify/local.ts";
+import { accessToken, authorizationCode, codeVerifier, userId } from "@/lib/spotify/local.ts";
+import { spotifyApi } from "@/lib/spotify/api.ts";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string;
 const redirectUri = "http://127.0.0.1:8080";
@@ -9,7 +10,12 @@ export async function requestAuthorization() {
     const hashed = await sha256(codeVerifier.value);
     const codeChallenge = base64encode(hashed);
 
-    const scope = "playlist-read-private playlist-modify-private";
+    const scope = [
+        "user-read-private",
+        "user-read-email",
+        "playlist-read-private",
+        "playlist-modify-private"
+    ].join(" ");
     const authUrl = new URL("https://accounts.spotify.com/authorize");
 
     const params = {
@@ -46,4 +52,5 @@ export async function getToken() {
     const response = await body.json();
 
     accessToken.value = response.access_token;
+    userId.value = (await spotifyApi("/me")).id;
 }
