@@ -35,7 +35,7 @@ const displayValue = computed(() => {
 });
 
 const backgroundColor = computed(() => {
-    return `color-mix(in lch, #0000bb ${ (props.value - props.min) / (props.max - props.min) * 100 }%, #990000)`;
+    return `color-mix(in lch, #0000bb ${ (props.value - props.min) / (props.max - props.min) * 100 }%, #770000)`;
 });
 </script>
 
@@ -44,7 +44,10 @@ const backgroundColor = computed(() => {
     width: 96px;
     height: 20px;
     position: relative;
-    background: rgba(0,0,0,0.25);
+    background: var(--fw-color-background-deep);
+    border-radius: var(--fw-radius-s);
+    overflow: hidden;
+    border: 1px solid var(--fw-color-background-lite);
 
     .percentage {
         background-color: blue;
@@ -61,7 +64,8 @@ const backgroundColor = computed(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: monospace;
+        font-family: var(--fw-font-family-monospace);
+        font-size: var(--fw-font-size-xs);
     }
 }
 </style>

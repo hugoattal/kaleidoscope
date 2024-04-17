@@ -1,18 +1,24 @@
 <template>
-    <div class="playlists">
-        <div
-            v-for="playlist of playlists"
-            :key="playlist.id"
-            class="playlist"
-        >
-            <button @click="select(playlist.id)">
-                Select
-            </button> {{ playlist.name }}
+    <div class="playlists-wrapper">
+        <div>
+            Step 2: Select a playlist
+        </div>
+        <div class="playlists">
+            <div
+                v-for="playlist of playlists"
+                :key="playlist.id"
+                class="playlist"
+            >
+                <FButton @click="select(playlist.id)">
+                    {{ playlist.name }}
+                </FButton>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { FButton } from "@ferris-wheel/design";
 import { onMounted, ref } from "vue";
 import { spotifyApiList } from "@/lib/spotify/api.ts";
 import { userId } from "@/lib/spotify/local.ts";
@@ -33,5 +39,15 @@ function select(playlistId: string) {
 </script>
 
 <style scoped>
+.playlists-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-length-xs);
+}
 
+.playlists {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fw-length-xs);
+}
 </style>

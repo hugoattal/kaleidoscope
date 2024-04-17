@@ -3,7 +3,7 @@ import { accessToken, authorizationCode, codeVerifier, userId } from "@/lib/spot
 import { spotifyApi } from "@/lib/spotify/api.ts";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string;
-const redirectUri = "http://127.0.0.1:8080";
+const redirectUri = window.location.origin;
 
 export async function requestAuthorization() {
     codeVerifier.value = generateRandomString(64);
@@ -14,7 +14,8 @@ export async function requestAuthorization() {
         "user-read-private",
         "user-read-email",
         "playlist-read-private",
-        "playlist-modify-private"
+        "playlist-modify-private",
+        "playlist-modify-public"
     ].join(" ");
     const authUrl = new URL("https://accounts.spotify.com/authorize");
 

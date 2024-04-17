@@ -1,10 +1,19 @@
 <template>
-    <button @click="connect">
-        Connect to Spotify
-    </button>
+    <div class="connect-wrapper">
+        <div>
+            Step 1: Connect to Spotify
+        </div>
+        <FButton
+            icon="power"
+            @click="connect"
+        >
+            Connect to Spotify
+        </FButton>
+    </div>
 </template>
 
 <script setup lang="ts">
+import { FButton } from "@ferris-wheel/design";
 import { onMounted } from "vue";
 import { getToken, requestAuthorization } from "@/lib/spotify";
 import { accessToken, authorizationCode } from "@/lib/spotify/local.ts";
@@ -32,5 +41,9 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-
+.connect-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-length-xs);
+}
 </style>
