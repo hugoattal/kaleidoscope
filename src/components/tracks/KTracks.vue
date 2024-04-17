@@ -4,7 +4,7 @@
         class="tracks-wrapper"
     >
         <table>
-            <tr>
+            <tr class="head">
                 <th />
                 <th />
                 <th />
@@ -108,6 +108,13 @@ async function savePlaylist() {
 
 table {
     border-spacing: 0;
+
+    th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--fw-color-background-lite);
+    }
 
     tr:nth-child(odd) {
         background: var(--fw-color-background-lite);
