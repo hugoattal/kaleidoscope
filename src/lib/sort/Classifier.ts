@@ -85,13 +85,13 @@ export class Classifier {
         }
 
         if (options.limit.popular) {
-            result.sort((a, b) => (a.popularity - b.popularity) * options.limit.popular);
+            result.sort((a, b) => (b.popularity - a.popularity) * options.limit.popular);
             const limit = Math.floor(result.length * Math.abs(options.limit.popular));
             result.length = limit || 1;
         }
 
         if (options.limit.speed) {
-            result.sort((a, b) => (a.features.tempo - b.features.tempo) * options.limit.speed);
+            result.sort((a, b) => (b.features.tempo - a.features.tempo) * options.limit.speed);
             const limit = Math.floor(result.length * Math.abs(options.limit.speed));
             result.length = limit || 1;
         }

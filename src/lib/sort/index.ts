@@ -1,4 +1,4 @@
-import { store, TTrack } from "@/lib/store.ts";
+import { computeTotalDuration, store, TTrack } from "@/lib/store.ts";
 import { Classifier } from "@/lib/sort/Classifier.ts";
 
 export function autoSort() {
@@ -47,7 +47,8 @@ export function autoSort() {
             },
             limit: {
                 energy: 0.75,
-                popular: 0.5
+                popular: 0.5,
+                speed: 0.5
             }
         }));
 
@@ -78,7 +79,7 @@ export function autoSort() {
                 energy: Math.random() > 0.75 ? 0.75 : 0,
                 popular: 0.75,
                 retro: Math.random() > 0.25 ? 0.25 : 0,
-                speed: Math.random() > 0.75 ? 0.75 : 0
+                speed: Math.random() > 0.75 ? 0.5 : 0
             }
         }));
 
@@ -88,7 +89,7 @@ export function autoSort() {
         slow = !slow;
     }
 
-    // Step 4: Normal + keep popular tracks
+    // Step 4: Normal
 
     classifier.generateThresholds();
 
@@ -107,7 +108,7 @@ export function autoSort() {
             },
             limit: {
                 energy: Math.random() > 0.5 ? 0.75 : 0,
-                popular: Math.random() > 0.75 ? 0.75 : 0,
+                popular: Math.random() > 0.5 ? 0.75 : 0,
                 retro: Math.random() > 0.25 ? 0.25 : 0,
                 speed: Math.random() > 0.5 ? 0.75 : 0
             }
@@ -139,4 +140,5 @@ export function autoSort() {
     }
 
     store.tracks = playlist;
+    computeTotalDuration();
 }
