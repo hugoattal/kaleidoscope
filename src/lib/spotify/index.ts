@@ -3,7 +3,7 @@ import { accessToken, authorizationCode, codeVerifier, userId } from "@/lib/spot
 import { spotifyApi } from "@/lib/spotify/api.ts";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string;
-const redirectUri = window.location.origin;
+const redirectUri = window.location.href;
 
 export async function requestAuthorization() {
     codeVerifier.value = generateRandomString(64);
