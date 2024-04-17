@@ -8,6 +8,7 @@ const alias = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    base: "./",
     plugins: [vue()],
     resolve: {
         alias
