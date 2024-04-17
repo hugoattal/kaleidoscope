@@ -1,9 +1,11 @@
-# Vue 3 + TypeScript + Vite
+# Kaleidoscope
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Rearrange playlist for dance party
 
-## Recommended Setup
+Access the app at [https://hugoattal.github.io/kaleidoscope/dist/](https://hugoattal.github.io/kaleidoscope/dist/)
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+## Installation
 
-- Use [vue-tsc](https://github.com/vuejs/language-tools/tree/master/packages/tsc) for performing the same type checking from the command line, or for generating d.ts files for SFCs.
+1. Copy `.env.example` to `.env` and fill in the required values. (Spotify client id can be generated there: https://developer.spotify.com/dashboard/)
+2. Install dependencies with `pnpm install`
+3. Run the app with `pnpm dev` or build it with `pnpm build`
