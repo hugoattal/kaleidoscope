@@ -47,7 +47,7 @@ const backgroundColor = computed(() => {
     background: var(--fw-color-background-deep);
     border-radius: var(--fw-radius-s);
     overflow: hidden;
-    border: 1px solid var(--fw-color-background-lite);
+    border: 1px solid var(--fw-color-background-liter);
 
     .percentage {
         background-color: blue;

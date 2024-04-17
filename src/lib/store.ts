@@ -3,14 +3,14 @@ import { reactive } from "vue";
 export type TTrack = {
     id: string;
     name: string;
-    album?: {
+    album: {
         release_date: string;
     };
-    artists?: Array<{
+    artists: Array<{
         name: string;
     }>;
     duration_ms: number;
-    features?: {
+    features: {
         danceability: number;
         energy: number;
         tempo: number;

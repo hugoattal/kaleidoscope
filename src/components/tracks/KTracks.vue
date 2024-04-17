@@ -19,7 +19,7 @@
                 <th>Tempo</th>
                 <th>Dance</th>
                 <th>Energy</th>
-                <th>Valence</th>
+                <th>Positive</th>
             </tr>
             <KTrack
                 v-for="(track, index) of store.tracks"
@@ -28,12 +28,18 @@
                 :track="track"
             />
         </table>
-        <div class="save">
+        <div class="buttons">
             <FButton
                 icon="save"
                 @click="savePlaylist"
             >
                 Save playlist
+            </FButton>
+            <FButton
+                icon="category"
+                @click="autoSort"
+            >
+                Smart sort
             </FButton>
         </div>
     </div>
@@ -45,6 +51,7 @@ import { watch } from "vue";
 import { computeTotalDuration, store } from "@/lib/store.ts";
 import { spotifyApi, spotifyApiList } from "@/lib/spotify/api.ts";
 import KTrack from "@/components/tracks/KTrack.vue";
+import { autoSort } from "@/lib/sort";
 
 watch(() => store.playlistId, async (playlistId) => {
     if (!playlistId) {
@@ -119,9 +126,16 @@ table {
     }
 }
 
-.save {
+.buttons {
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: var(--fw-length-xs);
     top: var(--fw-length-m);
     right: var(--fw-length-m);
+
+    button {
+        justify-content: left;
+    }
 }
 </style>
