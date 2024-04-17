@@ -40,8 +40,8 @@
         </td>
         <td>
             <KPercentageDisplay
-                :max="200"
-                :min="50"
+                :max="160"
+                :min="80"
                 :value="track.features.tempo"
             />
         </td>

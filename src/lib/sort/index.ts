@@ -33,11 +33,11 @@ export function autoSort() {
     let retro = false;
 
     while (time < totalTime * 0.1) {
-        if (!retro) {
-            retro = Math.random() > 0.5;
+        if (retro) {
+            retro = false;
         }
         else {
-            retro = false;
+            retro = Math.random() > 0.25;
         }
 
         track = classifier.getSafeTrack(classifier.getTrack({
@@ -63,11 +63,11 @@ export function autoSort() {
     classifier.generateThresholds();
 
     while (time < totalTime * 0.5) {
-        if (!retro) {
-            retro = Math.random() > 0.5;
+        if (retro) {
+            retro = false;
         }
         else {
-            retro = false;
+            retro = Math.random() > 0.25;
         }
 
         track = classifier.getSafeTrack(classifier.getTrack({
@@ -76,10 +76,10 @@ export function autoSort() {
                 speed: slow ? -1 : 1
             },
             limit: {
-                energy: Math.random() > 0.75 ? 0.75 : 0,
+                energy: 0.75,
                 popular: 0.75,
-                retro: Math.random() > 0.25 ? 0.25 : 0,
-                speed: Math.random() > 0.75 ? 0.5 : 0
+                retro: Math.random() > 0.5 ? 0.25 : 0,
+                speed: Math.random() > 0.5 ? 0.5 : 0
             }
         }));
 
@@ -95,7 +95,7 @@ export function autoSort() {
 
     while (time < totalTime * 0.8) {
         if (!retro) {
-            retro = Math.random() > 0.5;
+            retro = Math.random() > 0.25;
         }
         else {
             retro = false;
@@ -107,9 +107,9 @@ export function autoSort() {
                 speed: slow ? -1 : 1
             },
             limit: {
-                energy: Math.random() > 0.5 ? 0.75 : 0,
+                energy: 0.75,
                 popular: Math.random() > 0.5 ? 0.75 : 0,
-                retro: Math.random() > 0.25 ? 0.25 : 0,
+                retro: Math.random() > 0.5 ? 0.25 : 0,
                 speed: Math.random() > 0.5 ? 0.75 : 0
             }
         }));

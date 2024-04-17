@@ -71,8 +71,6 @@ watch(() => store.playlistId, async (playlistId) => {
     });
 
     computeTotalDuration();
-
-    console.log(store.tracks);
 }, {
     flush: "sync"
 });

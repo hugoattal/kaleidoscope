@@ -57,8 +57,8 @@ export class Classifier {
             result = temporary.length ? temporary : result;
         }
 
-        if (options.filter.energy) {
-            const temporary = result.filter(track => track.features.energy * options.filter.energy >= this.thresholds.energy * options.filter.energy);
+        if (options.filter.speed) {
+            const temporary = result.filter(track => track.features.tempo * options.filter.speed >= this.thresholds.speed * options.filter.speed);
             result = temporary.length ? temporary : result;
         }
 
@@ -67,8 +67,8 @@ export class Classifier {
             result = temporary.length ? temporary : result;
         }
 
-        if (options.filter.speed) {
-            const temporary = result.filter(track => track.features.tempo * options.filter.speed >= this.thresholds.speed * options.filter.speed);
+        if (options.filter.energy) {
+            const temporary = result.filter(track => track.features.energy * options.filter.energy >= this.thresholds.energy * options.filter.energy);
             result = temporary.length ? temporary : result;
         }
 
@@ -78,9 +78,9 @@ export class Classifier {
             result.length = limit || 1;
         }
 
-        if (options.limit.energy) {
-            result.sort((a, b) => (a.features.energy - b.features.energy) * options.limit.energy);
-            const limit = Math.floor(result.length * Math.abs(options.limit.energy));
+        if (options.limit.speed) {
+            result.sort((a, b) => (b.features.tempo - a.features.tempo) * options.limit.speed);
+            const limit = Math.floor(result.length * Math.abs(options.limit.speed));
             result.length = limit || 1;
         }
 
@@ -90,9 +90,9 @@ export class Classifier {
             result.length = limit || 1;
         }
 
-        if (options.limit.speed) {
-            result.sort((a, b) => (b.features.tempo - a.features.tempo) * options.limit.speed);
-            const limit = Math.floor(result.length * Math.abs(options.limit.speed));
+        if (options.limit.energy) {
+            result.sort((a, b) => (b.features.energy - a.features.energy) * options.limit.energy);
+            const limit = Math.floor(result.length * Math.abs(options.limit.energy));
             result.length = limit || 1;
         }
 
