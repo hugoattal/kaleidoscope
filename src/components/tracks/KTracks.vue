@@ -81,27 +81,17 @@ async function savePlaylist() {
     const trackIds = store.tracks.map((track) => track.id);
 
     for (let i = 0; i < store.tracks.length; i += 100) {
-        const response = await spotifyApi(`/playlists/${ store.playlistId }/tracks`, {
-            body: JSON.stringify({ tracks: trackIds.map((id) => ({ uri: `spotify:track:${ id }` })) }),
+        await spotifyApi(`/playlists/${ store.playlistId }/tracks`, {
+            body: JSON.stringify({ tracks: trackIds.slice(i, i + 100).map((id) => ({ uri: `spotify:track:${ id }` })) }),
             method: "DELETE"
         });
-
-        if (response.error) {
-            alert(`Error: ${ response.error.message }`);
-            return;
-        }
     }
 
     for (let i = 0; i < store.tracks.length; i += 100) {
-        const response = await spotifyApi(`/playlists/${ store.playlistId }/tracks`, {
+        await spotifyApi(`/playlists/${ store.playlistId }/tracks`, {
             body: JSON.stringify({ uris: trackIds.slice(i, i + 100).map((id) => `spotify:track:${ id }`) }),
             method: "POST"
         });
-
-        if (response.error) {
-            alert(`Error: ${ response.error.message }`);
-            return;
-        }
     }
 
     alert("Playlist saved!");

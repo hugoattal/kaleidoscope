@@ -14,7 +14,14 @@ export async function spotifyApi(url: string, config?: RequestInit) {
         ...config
     });
 
-    return response.json();
+    const responseJson = await response.json();
+
+    if (responseJson.error) {
+        alert(`Error: ${ responseJson.error.message }`);
+        throw new Error(responseJson.error.message);
+    }
+
+    return responseJson;
 }
 
 export async function spotifyApiList<T>(url: string, config?: RequestInit) {
