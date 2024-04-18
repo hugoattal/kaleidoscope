@@ -18,13 +18,27 @@
         <td class="time">
             {{ displayTime(track.total_duration) }}
         </td>
+        <td class="cover">
+            <div class="cover-wrapper">
+                <img
+                    alt="Album cover"
+                    :src="track.album.images[0]?.url"
+                >
+            </div>
+        </td>
         <td>
-            <div class="big">
+            <div
+                class="big"
+                :title="track.name"
+            >
                 {{ track.name }}
             </div>
         </td>
         <td>
-            <div class="big">
+            <div
+                class="big"
+                :title="track.artists[0].name"
+            >
                 {{ track.artists[0].name }}
             </div>
         </td>
@@ -74,7 +88,7 @@
         />
     </tr>
     <tr v-else>
-        <td />
+        <td colspan="4" />
         <td>
             <div class="big">
                 {{ track.name }}
@@ -163,6 +177,22 @@ function displayTime(ms: number) {
         color: var(--fw-color-content-liter);
         font-size: var(--fw-font-size-xs);
         font-family: var(--fw-font-family-monospace);
+    }
+
+    .cover {
+        padding: 0 var(--fw-length-xs);
+
+        .cover-wrapper {
+            display: flex;
+            justify-content: center;
+            height: 100%;
+        }
+
+        img {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--fw-radius-s);
+        }
     }
 
     .drag {
