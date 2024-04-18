@@ -29,7 +29,7 @@ export function autoSort() {
 
     // Step 2: High popularity/energy + alternate slow/fast
 
-    let slow = true;
+    let slow = false;
     let retro = false;
 
     while (time < totalTime * 0.1) {

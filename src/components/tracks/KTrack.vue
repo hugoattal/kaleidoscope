@@ -2,6 +2,7 @@
     <tr
         v-if="isReady"
         class="track"
+        :class="{dragging: isDraggable}"
         :draggable="isDraggable"
         @dragend="dragEnd"
         @dragstart="dragStart"
@@ -76,7 +77,9 @@
             @dragleave="dragLeave('before')"
             @dragover.prevent
             @drop="dragDrop('before')"
-        />
+        >
+            <div class="insert-line" />
+        </div>
         <div
             v-if="moveStore.moveSource"
             class="drop-zone after"
@@ -85,7 +88,9 @@
             @dragleave="dragLeave('after')"
             @dragover.prevent
             @drop="dragDrop('after')"
-        />
+        >
+            <div class="insert-line" />
+        </div>
     </tr>
     <tr v-else>
         <td colspan="4" />
@@ -147,13 +152,15 @@ function dragLeave(position: TDropInsertion) {
 }
 
 function dragDrop(position: TDropInsertion) {
-    const trackIndex = store.tracks.findIndex((track) => track.id === moveStore.moveSource);
-    const track = store.tracks[trackIndex];
-    store.tracks.splice(trackIndex, 1);
+    if (moveStore.moveSource !== props.track.id) {
+        const trackIndex = store.tracks.findIndex((track) => track.id === moveStore.moveSource);
+        const track = store.tracks[trackIndex];
+        store.tracks.splice(trackIndex, 1);
 
-    const targetIndex = store.tracks.findIndex((track) => track.id === props.track.id);
-    store.tracks.splice(targetIndex + (position === "before" ? 0 : 1), 0, track);
-    computeTotalDuration();
+        const targetIndex = store.tracks.findIndex((track) => track.id === props.track.id);
+        store.tracks.splice(targetIndex + (position === "before" ? 0 : 1), 0, track);
+        computeTotalDuration();
+    }
 
     dragHover.value = "";
     isDraggable.value = false;
@@ -171,6 +178,10 @@ function displayTime(ms: number) {
 <style scoped>
 .track {
     position: relative;
+
+    &.dragging {
+        background: var(--fw-color-primary-deepest);
+    }
 
     .index, .time {
         text-align: right;
@@ -198,26 +209,40 @@ function displayTime(ms: number) {
     .drag {
         color: var(--fw-color-content-litest);
         cursor: grab;
+
+        &:hover {
+            color: var(--fw-color-content-lite);
+        }
     }
 
     .drop-zone {
         position: absolute;
         left: 0;
         width: 100%;
-        height: 50%;
-        background: var(--fw-color-primary);
-        opacity: 0;
-
-        &.hover {
-            opacity: 0.1;
-        }
+        height: 100%;
+        display: flex;
+        align-items: center;
 
         &.before {
-            top: 0;
+            bottom: 50%;
         }
 
         &.after {
-            bottom: 0;
+            top: 50%;
+        }
+
+        .insert-line {
+            width: 100%;
+            height: 4px;
+            pointer-events: none;
+        }
+
+        &.hover {
+            background: color-mix(in lch, var(--fw-color-primary) 25%, transparent);
+
+            .insert-line {
+                background: var(--fw-color-primary);
+            }
         }
     }
 }
