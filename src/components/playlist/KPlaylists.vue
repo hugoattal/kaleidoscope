@@ -3,12 +3,16 @@
         class="playlists-wrapper"
         :depth="-2"
     >
-        <div class="name">
-            Playlists selection
+        <div class="filter">
+            <FTextInput
+                v-model="filter"
+                icon="search"
+                placeholder="Filter playlists"
+            />
         </div>
         <div class="playlists">
             <div
-                v-for="playlist of store.playlists"
+                v-for="playlist of filteredPlaylists"
                 :key="playlist.id"
                 class="playlist"
             >
@@ -25,8 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { EElementType, FBox, FButton } from "@ferris-wheel/design";
-import { onMounted, onUnmounted } from "vue";
+import { EElementType, FBox, FButton, FTextInput } from "@ferris-wheel/design";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { spotifyApiList } from "@/lib/spotify/api.ts";
 import { userId } from "@/lib/spotify/local.ts";
 import { store } from "@/lib/store.ts";
@@ -38,6 +42,12 @@ onMounted(async () => {
 function select(playlistId: string) {
     store.selectedPlaylist = playlistId;
 }
+
+const filter = ref("");
+
+const filteredPlaylists = computed(() => {
+    return store.playlists.filter((playlist) => playlist.name.toLowerCase().includes(filter.value.toLowerCase()));
+});
 
 onUnmounted(() => {
     store.selectedPlaylist = "";
@@ -51,16 +61,13 @@ onUnmounted(() => {
     gap: var(--fw-length-xs);
     width: 100%;
     padding: var(--fw-length-xs);
-
-    .name {
-        text-transform: uppercase;
-        font-size: 0.8rem;
-    }
 }
 
 .playlists {
     display: flex;
     flex-wrap: wrap;
     gap: var(--fw-length-xs);
+    max-height: 280px;
+    overflow: auto;
 }
 </style>
