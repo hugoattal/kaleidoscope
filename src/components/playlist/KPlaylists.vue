@@ -4,13 +4,24 @@
         :depth="-2"
     >
         <div class="filter">
+            <FButton
+                :icon="localStore.deployedPlaylists ? 'expand_more' : 'chevron_right'"
+                squared
+                @click="localStore.deployedPlaylists = !localStore.deployedPlaylists"
+            />
             <FTextInput
                 v-model="filter"
+                class="text-input"
                 icon="search"
                 placeholder="Filter playlists"
             />
         </div>
-        <div class="playlists">
+        <div
+            class="playlists"
+            :class="{
+                expanded: localStore.deployedPlaylists
+            }"
+        >
             <div
                 v-for="playlist of filteredPlaylists"
                 :key="playlist.id"
@@ -34,6 +45,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { spotifyApiList } from "@/lib/spotify/api.ts";
 import { userId } from "@/lib/spotify/local.ts";
 import { store } from "@/lib/store.ts";
+import { localStore } from "@/lib/stores/local.ts";
 
 onMounted(async () => {
     store.playlists = await spotifyApiList(`/users/${ userId.value }/playlists`);
@@ -61,6 +73,15 @@ onUnmounted(() => {
     gap: var(--fw-length-xs);
     width: 100%;
     padding: var(--fw-length-xs);
+
+    .filter {
+        display: flex;
+        gap: var(--fw-length-xs);
+
+        .text-input {
+            flex-grow: 1;
+        }
+    }
 }
 
 .playlists {
@@ -69,5 +90,9 @@ onUnmounted(() => {
     gap: var(--fw-length-xs);
     max-height: 280px;
     overflow: auto;
+
+    &.expanded {
+        max-height: none;
+    }
 }
 </style>
