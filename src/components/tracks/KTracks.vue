@@ -80,8 +80,21 @@ async function savePlaylist() {
 }
 
 async function exportPlaylist() {
+    if (store.tracks.length === 0) {
+        alert("No tracks to export!");
+        return;
+    }
+
+    let playlistName = prompt("Enter playlist name");
+
+    if (playlistName === null) {
+        return;
+    }
+
+    playlistName ||= "KS Export";
+
     const trackIds = store.tracks.map((track) => track.id);
-    await createPlaylist("", trackIds);
+    await createPlaylist(playlistName, trackIds);
 
     alert("Playlist exported!");
 }
