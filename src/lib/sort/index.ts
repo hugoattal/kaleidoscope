@@ -1,6 +1,11 @@
 import { computeTotalDuration, store, TTrack } from "@/lib/store.ts";
 import { Classifier } from "@/lib/sort/Classifier.ts";
 
+export function shuffle() {
+    store.tracks = store.tracks.sort(() => Math.random() - 0.5);
+    computeTotalDuration();
+}
+
 export function autoSort() {
     const classifier = new Classifier(store.tracks);
     classifier.generateThresholds();

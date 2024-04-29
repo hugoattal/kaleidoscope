@@ -50,6 +50,12 @@
                 Export playlist
             </FButton>
             <FButton
+                icon="shuffle"
+                @click="shuffle"
+            >
+                Shuffle
+            </FButton>
+            <FButton
                 icon="category"
                 @click="autoSort"
             >
@@ -63,7 +69,7 @@
 import { FButton } from "@ferris-wheel/design";
 import { store } from "@/lib/store.ts";
 import KTrack from "@/components/tracks/KTrack.vue";
-import { autoSort } from "@/lib/sort";
+import { autoSort, shuffle } from "@/lib/sort";
 import { createPlaylist, saveToPlaylist } from "@/lib/spotify/playlist.ts";
 
 async function savePlaylist() {

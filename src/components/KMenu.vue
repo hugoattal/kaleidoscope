@@ -17,14 +17,17 @@ import { EState, stateStore } from "@/lib/stores/state.ts";
 const options: TIconOptions = [
     {
         id: EState.ANALYZER,
+        icon: "monitoring",
         label: "Analyzer"
     },
     {
         id: EState.MIXER,
+        icon: "blender",
         label: "Mixer"
     },
     {
         id: EState.MERGER,
+        icon: "merge",
         label: "Merger"
     }
 ];
