@@ -17,6 +17,10 @@ export async function spotifyApi(url: string, config?: RequestInit) {
     const responseJson = await response.json();
 
     if (responseJson.error) {
+        if (responseJson.error.message === "The access token expired") {
+            accessToken.value = "";
+        }
+
         alert(`Error: ${ responseJson.error.message }`);
         throw new Error(responseJson.error.message);
     }

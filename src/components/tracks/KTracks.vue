@@ -1,8 +1,5 @@
 <template>
-    <div
-        v-if="store.playlistId"
-        class="tracks-wrapper"
-    >
+    <div class="tracks-wrapper">
         <table>
             <tr class="head">
                 <th colspan="4" />
@@ -12,12 +9,24 @@
                 <th class="big">
                     Artist
                 </th>
-                <th>Release</th>
-                <th>Popularity</th>
-                <th>Tempo</th>
-                <th>Dance</th>
-                <th>Energy</th>
-                <th>Positive</th>
+                <th class="value">
+                    Release
+                </th>
+                <th class="value">
+                    Popularity
+                </th>
+                <th class="value">
+                    Tempo
+                </th>
+                <th class="value">
+                    Dance
+                </th>
+                <th class="value">
+                    Energy
+                </th>
+                <th class="value">
+                    Positive
+                </th>
             </tr>
             <KTrack
                 v-for="(track, index) of store.tracks"
@@ -28,10 +37,17 @@
         </table>
         <div class="buttons">
             <FButton
+                v-if="store.selectedPlaylist"
                 icon="save"
                 @click="savePlaylist"
             >
                 Save playlist
+            </FButton>
+            <FButton
+                icon="publish"
+                @click="exportPlaylist"
+            >
+                Export playlist
             </FButton>
             <FButton
                 icon="category"
@@ -45,56 +61,23 @@
 
 <script setup lang="ts">
 import { FButton } from "@ferris-wheel/design";
-import { watch } from "vue";
-import { computeTotalDuration, store } from "@/lib/store.ts";
-import { spotifyApi, spotifyApiList } from "@/lib/spotify/api.ts";
+import { store } from "@/lib/store.ts";
 import KTrack from "@/components/tracks/KTrack.vue";
 import { autoSort } from "@/lib/sort";
-
-watch(() => store.playlistId, async (playlistId) => {
-    if (!playlistId) {
-        return;
-    }
-
-    store.tracks = (await spotifyApiList(`/playlists/${ playlistId }/tracks?fields=next,items(track(id,popularity,name,artists(name),duration_ms,album(release_date,images(url))))`)).map((item: any) => item.track);
-
-    const features = [];
-
-    for (let i = 0; i < store.tracks.length; i += 100) {
-        features.push(...(await spotifyApi(`/audio-features?ids=${ store.tracks.slice(i, i + 100).map((track) => track.id).join(",") }`)).audio_features);
-    }
-
-    store.tracks.forEach((track) => {
-        const feature = features.find((feature: any) => feature.id === track.id);
-
-        if (feature) {
-            track.features = feature;
-        }
-    });
-
-    computeTotalDuration();
-}, {
-    flush: "sync"
-});
+import { createPlaylist, saveToPlaylist } from "@/lib/spotify/playlist.ts";
 
 async function savePlaylist() {
     const trackIds = store.tracks.map((track) => track.id);
-
-    for (let i = 0; i < store.tracks.length; i += 100) {
-        await spotifyApi(`/playlists/${ store.playlistId }/tracks`, {
-            body: JSON.stringify({ tracks: trackIds.slice(i, i + 100).map((id) => ({ uri: `spotify:track:${ id }` })) }),
-            method: "DELETE"
-        });
-    }
-
-    for (let i = 0; i < store.tracks.length; i += 100) {
-        await spotifyApi(`/playlists/${ store.playlistId }/tracks`, {
-            body: JSON.stringify({ uris: trackIds.slice(i, i + 100).map((id) => `spotify:track:${ id }`) }),
-            method: "POST"
-        });
-    }
+    await saveToPlaylist(store.selectedPlaylist, trackIds);
 
     alert("Playlist saved!");
+}
+
+async function exportPlaylist() {
+    const trackIds = store.tracks.map((track) => track.id);
+    await createPlaylist("", trackIds);
+
+    alert("Playlist exported!");
 }
 </script>
 
@@ -122,6 +105,10 @@ table {
     th, :deep(td) {
         padding: var(--fw-length-xs);
         text-align: left;
+    }
+
+    th.value {
+        width: 96px;
     }
 
     :deep(.big) {

@@ -1,11 +1,8 @@
 <template>
     <FBody class="body">
         <div class="wrapper">
-            <KSpotifyConnect />
-            <template v-if="accessToken">
-                <KPlaylistsList />
-                <KTracks />
-            </template>
+            <KMain v-if="accessToken" />
+            <KSpotifyConnect v-else />
         </div>
     </FBody>
 </template>
@@ -14,8 +11,7 @@
 import { FBody } from "@ferris-wheel/design";
 import KSpotifyConnect from "@/components/KSpotifyConnect.vue";
 import { accessToken } from "@/lib/spotify/local.ts";
-import KPlaylistsList from "@/components/KPlaylists.vue";
-import KTracks from "@/components/tracks/KTracks.vue";
+import KMain from "@/components/KMain.vue";
 </script>
 
 <style scoped>

@@ -21,7 +21,9 @@ export type TTrack = {
 }
 
 export const store = reactive({
-    playlistId: "",
+    playlists: [] as Array<{id: string; name: string}>,
+    selectedPlaylist: "",
+    selectedPlaylists: new Set<string>(),
     tracks: [] as Array<TTrack>
 });
 
