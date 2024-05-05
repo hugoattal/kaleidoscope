@@ -58,8 +58,8 @@
 import { FBox, FButton, FCheckbox, FNumberInput, FSelect } from "@ferris-wheel/design";
 import { computed, ref } from "vue";
 import { store, TTrack } from "@/lib/store.ts";
-import { spotifyApiList } from "@/lib/spotify/api.ts";
 import { processTracks } from "@/lib/spotify/track.ts";
+import { getPlaylist } from "@/lib/spotify/cache.ts";
 
 enum EMergeType {
     BackToBack = "BackToBack",
@@ -92,17 +92,9 @@ async function generate() {
 
     store.tracks = [];
     const playlists = [];
-    const savedPlaylists = {} as Record<string, Array<TTrack>>;
-
-    const uniquePlaylists = new Set(store.selectedPlaylists);
-
-    for (const playlistId of uniquePlaylists) {
-        savedPlaylists[playlistId] = (await spotifyApiList(`/playlists/${ playlistId }/tracks?fields=next,items(track(id,popularity,name,artists(name),duration_ms,album(release_date,images(url))))`))
-            .map((item: any) => item.track);
-    }
 
     for (const playlistId of store.selectedPlaylists) {
-        playlists.push(savedPlaylists[playlistId]);
+        playlists.push(await getPlaylist(playlistId));
     }
 
     switch (mergeType.value) {
@@ -225,7 +217,6 @@ async function generateProgress(playlists: Array<Array<TTrack>>) {
             }
         }
     }
-
 
     .time {
         width: 200px;
