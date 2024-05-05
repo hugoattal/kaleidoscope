@@ -34,6 +34,16 @@
                     <span>({{ readableDuration }})</span>
                 </div>
             </div>
+            <div class="option">
+                <div class="name">
+                    Remove duplicates
+                </div>
+                <div class="form">
+                    <FCheckbox
+                        v-model="removeDuplicates"
+                    />
+                </div>
+            </div>
         </div>
         <FButton
             icon="manufacturing"
@@ -45,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { FBox, FButton, FNumberInput, FSelect } from "@ferris-wheel/design";
+import { FBox, FButton, FCheckbox, FNumberInput, FSelect } from "@ferris-wheel/design";
 import { computed, ref } from "vue";
 import { store, TTrack } from "@/lib/store.ts";
 import { spotifyApiList } from "@/lib/spotify/api.ts";
@@ -64,6 +74,7 @@ const dropdownOptions = [
 ];
 
 const mergeType = ref<EMergeType>(EMergeType.BackToBack);
+const removeDuplicates = ref<boolean>(true);
 
 const targetDuration = ref<number>(0);
 const readableDuration = computed(() => {
@@ -95,8 +106,21 @@ async function generate() {
     }
 
     switch (mergeType.value) {
-    case EMergeType.BackToBack:
+    case EMergeType.BackToBack: {
         store.tracks = playlists.flat();
+
+        if (removeDuplicates.value) {
+            const trackIds = new Set<string>();
+            store.tracks = store.tracks.filter((track) => {
+                if (trackIds.has(track.id)) {
+                    return false;
+                }
+
+                trackIds.add(track.id);
+                return true;
+            });
+        }
+    }
         break;
     case EMergeType.Interleaved: {
 
@@ -106,7 +130,7 @@ async function generate() {
         for (let i = 0; i < maxLength; i++) {
             for (const playlist of playlists) {
                 if (playlist[i]) {
-                    while (playlist[i] && trackIds.has(playlist[i].id)) {
+                    while (removeDuplicates.value && playlist[i] && trackIds.has(playlist[i].id)) {
                         playlist.splice(i, 1);
                     }
 
@@ -154,7 +178,7 @@ async function generateProgress(playlists: Array<Array<TTrack>>) {
     }
 
     for (const track of tempTracks) {
-        if (trackIds.has(track.track.id)) {
+        if (removeDuplicates.value && trackIds.has(track.track.id)) {
             tempTracks.splice(tempTracks.indexOf(track), 1);
             continue;
         }
@@ -188,6 +212,7 @@ async function generateProgress(playlists: Array<Array<TTrack>>) {
             display: flex;
             gap: var(--fw-length-xs);
             flex-direction: column;
+            width: 280px;
 
             .form {
                 display: flex;
