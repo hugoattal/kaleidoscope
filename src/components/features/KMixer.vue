@@ -129,11 +129,11 @@ async function generate() {
 
         for (let i = 0; i < maxLength; i++) {
             for (const playlist of playlists) {
-                if (playlist[i]) {
-                    while (removeDuplicates.value && playlist[i] && trackIds.has(playlist[i].id)) {
-                        playlist.splice(i, 1);
-                    }
+                while (removeDuplicates.value && playlist[i] && trackIds.has(playlist[i].id)) {
+                    playlist.splice(i, 1);
+                }
 
+                if (playlist[i]) {
                     store.tracks.push(playlist[i]);
                     trackIds.add(playlist[i].id);
                 }
