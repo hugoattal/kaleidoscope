@@ -145,6 +145,7 @@ table {
     gap: var(--fw-length-xs);
     top: var(--fw-length-m);
     right: var(--fw-length-m);
+    z-index: 10;
 
     button {
         justify-content: left;

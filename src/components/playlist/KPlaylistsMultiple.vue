@@ -28,9 +28,8 @@
                 class="playlist"
             >
                 <FButton
-                    :icon="store.selectedPlaylists.has(playlist.id) ? 'check_box' : 'check_box_outline_blank'"
-                    :type="store.selectedPlaylists.has(playlist.id) ? EElementType.Primary : EElementType.Default"
-                    @click="toggle(playlist.id)"
+                    icon="add"
+                    @click="addPlaylist(playlist.id)"
                 >
                     {{ playlist.name }}
                 </FButton>
@@ -40,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { EElementType, FBox, FButton, FTextInput } from "@ferris-wheel/design";
+import { FBox, FButton, FTextInput } from "@ferris-wheel/design";
 import { computed, onMounted, ref } from "vue";
 import { spotifyApiList } from "@/lib/spotify/api.ts";
 import { userId } from "@/lib/spotify/local.ts";
@@ -51,13 +50,8 @@ onMounted(async () => {
     store.playlists = await spotifyApiList(`/users/${ userId.value }/playlists`);
 });
 
-function toggle(playlistId: string) {
-    if (store.selectedPlaylists.has(playlistId)) {
-        store.selectedPlaylists.delete(playlistId);
-    }
-    else {
-        store.selectedPlaylists.add(playlistId);
-    }
+function addPlaylist(playlistId: string) {
+    store.selectedPlaylists.push(playlistId);
 }
 
 const filter = ref("");

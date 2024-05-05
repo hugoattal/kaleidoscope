@@ -24,11 +24,6 @@ const options: TIconOptions = [
         id: EState.MIXER,
         icon: "blender",
         label: "Mixer"
-    },
-    {
-        id: EState.MERGER,
-        icon: "merge",
-        label: "Merger"
     }
 ];
 </script>

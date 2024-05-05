@@ -2,7 +2,14 @@ import { computeTotalDuration, store, TTrack } from "@/lib/store.ts";
 import { Classifier } from "@/lib/sort/Classifier.ts";
 
 export function shuffle() {
-    store.tracks = store.tracks.sort(() => Math.random() - 0.5);
+    const remaining = [...store.tracks];
+    store.tracks = [];
+
+    while (remaining.length) {
+        const index = Math.floor(Math.random() * remaining.length);
+        store.tracks.push(remaining.splice(index, 1)[0]);
+    }
+
     computeTotalDuration();
 }
 
