@@ -5,8 +5,8 @@
 
 <script setup lang="ts">
 import { onMounted, watch } from "vue";
-import KPlaylistsList from "@/components/playlist/KPlaylists.vue";
-import KTracks from "@/components/tracks/KTracks.vue";
+import KPlaylistsList from "@/pages/builder/components/playlist/KPlaylists.vue";
+import KTracks from "@/pages/builder/components/tracks/KTracks.vue";
 import { store } from "@/lib/store.ts";
 import { processTracks } from "@/lib/spotify/track.ts";
 import { getPlaylist } from "@/lib/spotify/cache.ts";

@@ -1,4 +1,5 @@
 import { accessToken } from "@/lib/spotify/local.ts";
+import router from "@/router";
 
 const baseApiUrl = "https://api.spotify.com/v1";
 
@@ -22,6 +23,7 @@ export async function spotifyApi(url: string, config?: RequestInit) {
         }
 
         alert(`Error: ${ responseJson.error.message }`);
+        await router.push({ name: "landing" });
         throw new Error(responseJson.error.message);
     }
 
@@ -37,5 +39,5 @@ export async function spotifyApiList<T>(url: string, config?: RequestInit) {
         items.push(...response.items);
     }
 
-    return items as T[];
+    return items as Array<T>;
 }

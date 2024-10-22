@@ -1,8 +1,11 @@
 <template>
     <div class="menu-wrapper">
-        <div class="title">
+        <RouterLink
+            class="title"
+            to="/"
+        >
             Kaleidoscope
-        </div>
+        </RouterLink>
         <FButtonGroup
             v-model="stateStore.current"
             :options="options"

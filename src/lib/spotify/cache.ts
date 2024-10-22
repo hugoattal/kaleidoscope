@@ -2,7 +2,7 @@ import { TTrack } from "@/lib/store.ts";
 import { spotifyApi, spotifyApiList } from "@/lib/spotify/api.ts";
 import { userId } from "@/lib/spotify/local.ts";
 
-const cache = {
+export const cache = {
     features: {} as Record<string, TTrack>,
     playlists: {} as Record<string, Array<TTrack>>
 } as {

@@ -1,28 +1,12 @@
 <template>
     <FBody class="body">
-        <div class="wrapper">
-            <KMain v-if="accessToken" />
-            <KSpotifyConnect v-else />
-        </div>
+        <RouterView />
     </FBody>
 </template>
 
 <script setup lang="ts">
 import { FBody } from "@ferris-wheel/design";
-import KSpotifyConnect from "@/components/KSpotifyConnect.vue";
-import { accessToken } from "@/lib/spotify/local.ts";
-import KMain from "@/components/KMain.vue";
 </script>
-
-<style scoped>
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--fw-length-m);
-    padding: var(--fw-length-m);
-}
-</style>
 
 <style>
 @import "@ferris-wheel/design/dist/style.css" layer(ferris-wheel);

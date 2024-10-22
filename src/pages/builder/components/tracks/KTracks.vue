@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { FButton } from "@ferris-wheel/design";
 import { store } from "@/lib/store.ts";
-import KTrack from "@/components/tracks/KTrack.vue";
+import KTrack from "@/pages/builder/components/tracks/KTrack.vue";
 import { autoSort, shuffle } from "@/lib/sort";
 import { createPlaylist, saveToPlaylist } from "@/lib/spotify/playlist.ts";
 

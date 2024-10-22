@@ -14,10 +14,14 @@
 import { computed } from "vue";
 
 const props = withDefaults(defineProps<{
+    colorMax?: string;
+    colorMin?: string;
     max?: number;
     min?: number;
     value: number;
 }>(), {
+    colorMax: "#0000bb",
+    colorMin: "#770000",
     max: 1,
     min: 0
 });
@@ -34,8 +38,13 @@ const displayValue = computed(() => {
     return Math.round(props.value);
 });
 
+const percentage = computed(() => {
+    const raw = (props.value - props.min) / (props.max - props.min);
+    return Math.min(1, Math.max(0, raw));
+});
+
 const backgroundColor = computed(() => {
-    return `color-mix(in lch, #0000bb ${ (props.value - props.min) / (props.max - props.min) * 100 }%, #770000)`;
+    return `color-mix(in lch, ${ props.colorMax } ${ percentage.value * 100 }%, ${ props.colorMin })`;
 });
 </script>
 
