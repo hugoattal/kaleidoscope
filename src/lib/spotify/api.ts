@@ -1,9 +1,10 @@
 import { accessToken } from "@/lib/spotify/local.ts";
 import router from "@/router";
+import { getRefreshToken } from "@/lib/spotify/index.ts";
 
 const baseApiUrl = "https://api.spotify.com/v1";
 
-export async function spotifyApi(url: string, config?: RequestInit) {
+export async function spotifyApi(url: string, config?: RequestInit, refresh = true) {
     const targetUrl = url.startsWith("http") ? url : baseApiUrl + url;
 
     const response = await fetch(targetUrl, {
@@ -19,10 +20,16 @@ export async function spotifyApi(url: string, config?: RequestInit) {
 
     if (responseJson.error) {
         if (responseJson.error.message === "The access token expired") {
+            if (refresh) {
+                await getRefreshToken();
+                return spotifyApi(url, config, false);
+            }
+
             accessToken.value = "";
         }
 
         alert(`Error: ${ responseJson.error.message }`);
+
         await router.push({ name: "landing" });
         throw new Error(responseJson.error.message);
     }

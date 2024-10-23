@@ -1,5 +1,9 @@
 <template>
-    <div class="tracklist">
+    <TransitionGroup
+        class="tracklist"
+        name="list"
+        tag="div"
+    >
         <div
             v-for="track in tracks"
             :key="track.data.id"
@@ -18,42 +22,45 @@
                         track.data.artists[0].name
                     }}</span>)
                 </div>
-                <div class="features">
+                <div
+                    v-if="track.data.features"
+                    class="features"
+                >
                     <div class="feature-wrapper">
-                        Popularité
+                        <span>Tempo (<strong>{{ Math.round(track.data.features.tempo) }}</strong> BPM)</span>
                         <KPercentageDisplay
                             class="feature"
                             color-max="#fcfa01"
-                            color-min="#880004"
-                            :value="track.data.popularity/100"
-                        />
-                    </div>
-                    <div class="feature-wrapper">
-                        Tempo
-                        <KPercentageDisplay
-                            class="feature"
-                            color-max="#fcfa01"
-                            color-min="#880004"
+                            color-min="#550004"
                             :max="160"
                             :min="80"
                             :value="track.data.features.tempo"
                         />
                     </div>
                     <div class="feature-wrapper">
-                        Danceabilité
+                        <span>Popularité</span>
                         <KPercentageDisplay
                             class="feature"
                             color-max="#fcfa01"
-                            color-min="#880004"
+                            color-min="#550004"
+                            :value="track.data.popularity/100"
+                        />
+                    </div>
+                    <div class="feature-wrapper">
+                        <span>Danceabilité</span>
+                        <KPercentageDisplay
+                            class="feature"
+                            color-max="#fcfa01"
+                            color-min="#550004"
                             :value="track.data.features.danceability"
                         />
                     </div>
                     <div class="feature-wrapper">
-                        Énergie
+                        <span>Énergie</span>
                         <KPercentageDisplay
                             class="feature"
                             color-max="#fcfa01"
-                            color-min="#880004"
+                            color-min="#550004"
                             :value="track.data.features.energy"
                         />
                     </div>
@@ -64,7 +71,7 @@
                 {{ track.description }}
             </div>
         </div>
-    </div>
+    </TransitionGroup>
 </template>
 
 <script setup lang="ts">
@@ -116,6 +123,7 @@ const tracks = computed(() => {
     align-items: center;
     gap: var(--fw-length-l);
     margin: var(--fw-length-xl) 0;
+    position: relative;
 
     .track {
         display: flex;
@@ -127,6 +135,12 @@ const tracks = computed(() => {
         width: 60%;
         box-shadow: 0 8px 16px #13050588;
         position: relative;
+        transition: all 0.5s ease;
+        border: 1px solid #f2920055;
+
+        &.list-leave-active {
+            position: absolute;
+        }
 
         .content {
             display: flex;
@@ -136,10 +150,12 @@ const tracks = computed(() => {
         }
 
         .title {
+            transition: all 0.5s ease;
             font-size: 28px;
             color: var(--fw-color-content-lite);
 
             .name {
+                transition: all 0.5s ease;
                 font-size: 32px;
                 font-weight: bold;
                 color: var(--fw-color-content-deeper);
@@ -147,11 +163,13 @@ const tracks = computed(() => {
         }
 
         .cover {
+            transition: all 0.5s ease;
             width: 128px;
+            height: 128px;
 
             img {
+                transition: all 0.5s ease;
                 border-radius: var(--fw-radius-l);
-                aspect-ratio: 1;
                 width: 100%;
             }
         }
@@ -167,9 +185,15 @@ const tracks = computed(() => {
                 font-size: var(--fw-font-size-s);
                 color: var(--fw-color-content-liter);
 
+                strong {
+                    color: var(--fw-color-content-lite);
+                }
+
                 .feature {
+                    transition: all 0.5s ease;
                     color: transparent;
                     height: 10px;
+                    width: 120px;
                     border: 1px solid var(--fw-color-background-litest);
                 }
             }
@@ -185,15 +209,12 @@ const tracks = computed(() => {
         }
     }
 
-    .current {
-        border: 1px solid #f2920055;
-    }
-
     .next, .last {
         width: 40%;
         border-radius: var(--fw-length-l);
         background: #1c0b0b44;
         grid-template-columns: 48px 1fr;
+        border-color: transparent;
 
         .content {
             opacity: 0.5;
@@ -220,6 +241,7 @@ const tracks = computed(() => {
 
         .cover {
             width: 64px;
+            height: 64px;
             opacity: 0.5;
 
             img {
@@ -227,5 +249,10 @@ const tracks = computed(() => {
             }
         }
     }
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
 }
 </style>

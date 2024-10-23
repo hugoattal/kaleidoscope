@@ -1,5 +1,6 @@
 <template>
     <KBackground class="bokeh" />
+    <KPlayerMenu />
     <div class="content">
         <img
             alt="RockIt Logo"
@@ -16,6 +17,7 @@ import KBackground from "@/pages/player/components/KBackground.vue";
 import RockItLogo from "@/assets/rockit.svg";
 import { syncQueue } from "@/lib/spotify/player.ts";
 import KTracklist from "@/pages/player/components/KTracklist.vue";
+import KPlayerMenu from "@/pages/player/components/KPlayerMenu.vue";
 
 onMounted(async () => {
     await syncQueue();
@@ -34,6 +36,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: var(--fw-length-xl);
 
     .logo {
@@ -45,7 +48,7 @@ onMounted(async () => {
 
 <style>
 :root{
-    --fw-config-primary-hue: 20deg;
-    --fw-config-content-hue: 20deg;
+    --fw-config-primary-hue: 60deg;
+    --fw-config-content-hue: 60deg;
 }
 </style>

@@ -17,7 +17,7 @@ import { useElementSize } from "@vueuse/core";
 import { animationLoop } from "@/pages/player/lib/animation.ts";
 
 const props = withDefaults(defineProps<{
-    speed: number;
+    speed?: number;
 }>(), {
     speed: 1
 });

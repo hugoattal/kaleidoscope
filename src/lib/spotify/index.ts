@@ -1,5 +1,5 @@
 import { base64encode, generateRandomString, sha256 } from "./lib.ts";
-import { accessToken, authorizationCode, codeVerifier, userId } from "@/lib/spotify/local.ts";
+import { accessToken, authorizationCode, codeVerifier, refreshToken, userId } from "@/lib/spotify/local.ts";
 import { spotifyApi } from "@/lib/spotify/api.ts";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string;
@@ -62,5 +62,29 @@ export async function getToken() {
     const response = await body.json();
 
     accessToken.value = response.access_token;
+    refreshToken.value = response.refresh_token;
+
     userId.value = (await spotifyApi("/me")).id;
+}
+
+export async function getRefreshToken() {
+    const tokenUrl = new URL("https://accounts.spotify.com/api/token");
+
+    const payload = {
+        body: new URLSearchParams({
+            client_id: clientId,
+            grant_type: "refresh_token",
+            refresh_token: refreshToken.value
+        }),
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        method: "POST"
+    };
+
+    const body = await fetch(tokenUrl, payload);
+    const response = await body.json();
+
+    accessToken.value = response.access_token;
+    refreshToken.value = response.refresh_token;
 }
