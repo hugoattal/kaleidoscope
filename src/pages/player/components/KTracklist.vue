@@ -27,40 +27,43 @@
                     class="features"
                 >
                     <div class="feature-wrapper">
-                        <span>Tempo (<strong>{{ Math.round(track.data.features.tempo) }}</strong> BPM)</span>
-                        <KPercentageDisplay
+                        <div class="label">
+                            <FIcon
+                                class="icon"
+                                icon="speed"
+                            />
+                            <span>Tempo (<strong>{{ Math.round(track.data.features.tempo) }}</strong> BPM)</span>
+                        </div>
+                        <KFeatureDisplay
                             class="feature"
-                            color-max="#fcfa01"
-                            color-min="#550004"
                             :max="160"
                             :min="80"
                             :value="track.data.features.tempo"
                         />
                     </div>
                     <div class="feature-wrapper">
-                        <span>Popularité</span>
-                        <KPercentageDisplay
+                        <div class="label">
+                            <FIcon
+                                class="icon"
+                                icon="trending_up"
+                            />
+                            <span>Popularité</span>
+                        </div>
+                        <KFeatureDisplay
                             class="feature"
-                            color-max="#fcfa01"
-                            color-min="#550004"
                             :value="track.data.popularity/100"
                         />
                     </div>
                     <div class="feature-wrapper">
-                        <span>Danceabilité</span>
-                        <KPercentageDisplay
+                        <div class="label">
+                            <FIcon
+                                class="icon"
+                                icon="bolt"
+                            />
+                            <span>Énergie</span>
+                        </div>
+                        <KFeatureDisplay
                             class="feature"
-                            color-max="#fcfa01"
-                            color-min="#550004"
-                            :value="track.data.features.danceability"
-                        />
-                    </div>
-                    <div class="feature-wrapper">
-                        <span>Énergie</span>
-                        <KPercentageDisplay
-                            class="feature"
-                            color-max="#fcfa01"
-                            color-min="#550004"
                             :value="track.data.features.energy"
                         />
                     </div>
@@ -77,9 +80,10 @@
 <script setup lang="ts">
 import { currentTrack, nextTracks, previousTracks } from "@/lib/spotify/player.ts";
 import { computed } from "vue";
-import KPercentageDisplay from "@/pages/builder/components/form/KPercentageDisplay.vue";
 import { TTrack } from "@/lib/store.ts";
 import KPlaybar from "@/pages/player/components/KPlaybar.vue";
+import KFeatureDisplay from "@/pages/player/components/KFeatureDisplay.vue";
+import { FIcon } from "@ferris-wheel/design";
 
 const lastTrack = computed(() => previousTracks.value.at(-1));
 const comingTracks = computed(() => nextTracks.value.slice(0, 3));
@@ -158,6 +162,10 @@ const tracks = computed(() => {
                 transition: all 0.5s ease;
                 font-size: 32px;
                 font-weight: bold;
+                color: var(--fw-color-content-deepest);
+            }
+
+            .artist {
                 color: var(--fw-color-content-deeper);
             }
         }
@@ -182,19 +190,27 @@ const tracks = computed(() => {
                 display: flex;
                 flex-direction: column;
                 gap: var(--fw-length-xxs);
-                font-size: var(--fw-font-size-s);
-                color: var(--fw-color-content-liter);
+                font-size: var(--fw-font-size-m);
+                color: var(--fw-color-content);
+
+                .label {
+                    display: flex;
+                    align-items: center;
+                    gap: var(--fw-length-xxs);
+
+                    .icon {
+                        color: var(--fw-color-content-deepest);
+                    }
+                }
 
                 strong {
-                    color: var(--fw-color-content-lite);
+                    color: var(--fw-color-content-deepest);
                 }
 
                 .feature {
                     transition: all 0.5s ease;
-                    color: transparent;
                     height: 10px;
-                    width: 120px;
-                    border: 1px solid var(--fw-color-background-litest);
+                    width: 180px;
                 }
             }
         }
@@ -231,10 +247,11 @@ const tracks = computed(() => {
 
         .features {
             .feature-wrapper {
-                font-size: var(--fw-font-size-xs);
+                font-size: var(--fw-font-size-s);
 
                 .feature {
-                    height: 4px;
+                    height: 6px;
+                    width: 128px;
                 }
             }
         }

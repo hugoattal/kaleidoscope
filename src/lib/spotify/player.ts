@@ -26,6 +26,11 @@ export async function syncQueue() {
 
         if (response.currently_playing.id === nextTracks.value[0]?.id && response.queue[0]?.id === nextTracks.value[1]?.id) {
             currentTrack.value = nextTracks.value.shift();
+
+            setTimeout(async () => {
+                await addAudioFeatures(response.queue);
+                nextTracks.value = response.queue;
+            }, 3000);
         }
         else {
             currentTrack.value = response.currently_playing;

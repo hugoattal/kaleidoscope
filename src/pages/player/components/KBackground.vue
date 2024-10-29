@@ -15,6 +15,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useElementSize } from "@vueuse/core";
 import { animationLoop } from "@/pages/player/lib/animation.ts";
+import { backgroundColor, particleSpeed } from "@/pages/player/lib/store.ts";
 
 const props = withDefaults(defineProps<{
     speed?: number;
@@ -81,7 +82,7 @@ function generateBokehs() {
 }
 
 function updateBokehs(delta: number) {
-    const speed = BOKEH_SPEED * props.speed * delta * (60 / 1000) / wrapperBounding.height.value;
+    const speed = BOKEH_SPEED * props.speed * delta * (60 / 1000) / wrapperBounding.height.value * particleSpeed.value;
 
     for (const bokeh of bokehs) {
         bokeh.y -= speed / bokeh.radius;
@@ -127,7 +128,7 @@ function drawBokehs() {
 .canvas-wrapper {
     position: absolute;
     inset: 0;
-    background: oklch(14% 0.0298 20.52);
+    background: v-bind(backgroundColor);
 
     canvas {
         position: absolute;
