@@ -28,7 +28,7 @@ export async function spotifyApi(url: string, config?: RequestInit, refresh = tr
             accessToken.value = "";
         }
 
-        if (!responseJson.error.message) {
+        if (responseJson.error.status === 403) {
             throw new Error("Unknown error");
         }
 

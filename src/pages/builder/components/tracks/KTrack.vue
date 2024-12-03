@@ -1,6 +1,5 @@
 <template>
     <tr
-        v-if="isReady"
         class="track"
         :class="{dragging: isDraggable}"
         :draggable="isDraggable"
@@ -55,19 +54,45 @@
         </td>
         <td>
             <KPercentageDisplay
+                v-if="track.features"
                 :max="160"
                 :min="80"
                 :value="track.features.tempo"
             />
+            <span
+                v-else
+                class="loading"
+            >Loading...</span>
         </td>
         <td>
-            <KPercentageDisplay :value="track.features.danceability" />
+            <KPercentageDisplay
+                v-if="track.features"
+                :value="track.features.danceability"
+            />
+            <span
+                v-else
+                class="loading"
+            >Loading...</span>
         </td>
         <td>
-            <KPercentageDisplay :value="track.features.energy" />
+            <KPercentageDisplay
+                v-if="track.features"
+                :value="track.features.energy"
+            />
+            <span
+                v-else
+                class="loading"
+            >Loading...</span>
         </td>
         <td>
-            <KPercentageDisplay :value="track.features.valence" />
+            <KPercentageDisplay
+                v-if="track.features"
+                :value="track.features.valence"
+            />
+            <span
+                v-else
+                class="loading"
+            >Loading...</span>
         </td>
         <div
             v-if="moveStore.moveSource"
@@ -91,17 +116,6 @@
         >
             <div class="insert-line" />
         </div>
-    </tr>
-    <tr v-else>
-        <td colspan="4" />
-        <td>
-            <div class="big">
-                {{ track.name }}
-            </div>
-        </td>
-        <td :colspan="7">
-            Loading...
-        </td>
     </tr>
 </template>
 
@@ -244,6 +258,10 @@ function displayTime(ms: number) {
                 background: var(--fw-color-primary);
             }
         }
+    }
+
+    .loading {
+        color: var(--fw-color-content-litest);
     }
 }
 </style>
