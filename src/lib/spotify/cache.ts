@@ -28,18 +28,23 @@ export async function getUserPlaylists() {
 }
 
 export async function addAudioFeatures(tracks: Array<TTrack>) {
-    const missingTracks = tracks.filter((track) => !cache.features[track.id]);
+    try {
+        const missingTracks = tracks.filter((track) => !cache.features[track.id]);
 
-    for (let i = 0; i < missingTracks.length; i += 100) {
-        const response = await spotifyApi(`/audio-features?ids=${ missingTracks.slice(i, i + 100).map((track) => track.id).join(",") }`);
-        const features = (response.audio_features);
+        for (let i = 0; i < missingTracks.length; i += 100) {
+            const response = await spotifyApi(`/audio-features?ids=${ missingTracks.slice(i, i + 100).map((track) => track.id).join(",") }`);
+            const features = (response.audio_features);
 
-        for (const feature of features) {
-            cache.features[feature.id] = feature;
+            for (const feature of features) {
+                cache.features[feature.id] = feature;
+            }
+        }
+
+        for (const track of tracks) {
+            track.features = cache.features[track.id];
         }
     }
-
-    for (const track of tracks) {
-        track.features = cache.features[track.id];
+    catch (e) {
+        console.error(e);
     }
 }

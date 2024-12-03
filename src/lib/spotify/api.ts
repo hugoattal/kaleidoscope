@@ -28,6 +28,10 @@ export async function spotifyApi(url: string, config?: RequestInit, refresh = tr
             accessToken.value = "";
         }
 
+        if (!responseJson.error.message) {
+            throw new Error("Unknown error");
+        }
+
         alert(`Error: ${ responseJson.error.message }`);
 
         await router.push({ name: "landing" });
