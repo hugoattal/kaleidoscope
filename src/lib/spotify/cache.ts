@@ -28,6 +28,8 @@ export async function getUserPlaylists() {
 }
 
 export async function addAudioFeatures(tracks: Array<TTrack>) {
+    return; // Because Spotify fucking deleted the API without warning
+
     try {
         const missingTracks = tracks.filter((track) => !cache.features[track.id]);
 

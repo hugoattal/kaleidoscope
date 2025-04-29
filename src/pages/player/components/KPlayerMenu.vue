@@ -10,23 +10,40 @@
         />
         <FButton
             icon="refresh"
-            @click="refresh"
+            @click="manualSync"
         >
             Manual sync
+        </FButton>
+        <FButton
+            icon="refresh"
+            @click="offlineSync"
+            :type="playerStore.offline ? EElementType.Primary : EElementType.Default"
+        >
+            Offline sync
         </FButton>
     </div>
 </template>
 
 <script setup lang="ts">
-import { FButton, FButtonGroup, TIconOptions } from "@ferris-wheel/design";
-import { syncQueue } from "@/lib/spotify/player.ts";
-import { backgroundColor, particleSpeed } from "@/pages/player/lib/store.ts";
+import {EElementType, FButton, FButtonGroup, TIconOptions} from "@ferris-wheel/design";
+import {syncQueue} from "@/lib/spotify/player.ts";
+import {backgroundColor, particleSpeed, playerStore} from "@/pages/player/lib/store.ts";
 
-async function refresh() {
+async function manualSync() {
     await syncQueue();
 }
 
-const particleSpeedOptions:TIconOptions = [
+async function offlineSync() {
+    if (playerStore.offline) {
+        playerStore.offline = false;
+        return;
+    }
+
+    playerStore.offline = true;
+    await syncQueue();
+}
+
+const particleSpeedOptions: TIconOptions = [
     {
         id: "0",
         icon: "stop",
@@ -44,7 +61,7 @@ const particleSpeedOptions:TIconOptions = [
     }
 ];
 
-const backgroundColorOptions:TIconOptions = [
+const backgroundColorOptions: TIconOptions = [
     {
         id: "#1c0b0b",
         icon: "light_mode",

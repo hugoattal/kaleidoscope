@@ -5,6 +5,9 @@ export type TTrack = {
     name: string;
     album: {
         release_date: string;
+        images: Array<{
+            url: string;
+        }>;
     };
     artists: Array<{
         name: string;

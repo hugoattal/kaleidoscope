@@ -2,6 +2,8 @@ import { spotifyApi } from "@/lib/spotify/api.ts";
 import { TTrack } from "@/lib/store.ts";
 import { ref } from "vue";
 import { addAudioFeatures } from "@/lib/spotify/cache.ts";
+import {playerStore} from "@/pages/player/lib/store.ts";
+import {preloadAlbums} from "@/lib/spotify/offline.ts";
 
 export const previousTracks = ref<Array<TTrack>>([]);
 export const currentTrack = ref<TTrack>();
@@ -37,12 +39,28 @@ export async function syncQueue() {
             nextTracks.value = response.queue;
         }
 
-
         await addAudioFeatures([currentTrack.value, ...nextTracks.value]);
     }
 
     await syncPlayback();
     syncKey.value++;
+
+    if (playerStore.offline) {
+        preloadAlbums();
+    }
+}
+
+export function offlineNextTrack() {
+    if (!nextTracks.value.length) {
+        return;
+    }
+
+    if (currentTrack.value) {
+        previousTracks.value.push(currentTrack.value);
+    }
+
+    currentTrack.value = nextTracks.value.shift();
+    progressMs.value = 0;
 }
 
 export async function syncPlayback() {

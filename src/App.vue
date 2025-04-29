@@ -9,7 +9,7 @@ import { FBody } from "@ferris-wheel/design";
 </script>
 
 <style>
-@import "@ferris-wheel/design/dist/style.css" layer(ferris-wheel);
+@import "@ferris-wheel/design/design.css" layer(ferris-wheel);
 
 :root, :host {
     --fw-config-radius: 8px;
