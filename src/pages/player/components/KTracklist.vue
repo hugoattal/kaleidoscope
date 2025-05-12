@@ -17,7 +17,7 @@
                 >
             </div>
             <div class="content">
-                <div class="title">
+                <div class="title" translate="no">
                     <span class="name">{{ track.data.name }}</span> (<span class="artist">{{
                         track.data.artists[0].name
                     }}</span>)
