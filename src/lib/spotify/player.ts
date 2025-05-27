@@ -11,6 +11,7 @@ export const nextTracks = ref<Array<TTrack>>([]);
 export const progressMs = ref(0);
 export const syncKey = ref(0);
 export const syncing = ref(false);
+export const displayEvent = ref(false);
 
 export async function safeSyncQueue() {
     if (!syncing.value) {

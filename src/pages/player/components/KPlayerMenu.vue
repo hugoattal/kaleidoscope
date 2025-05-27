@@ -1,5 +1,11 @@
 <template>
     <div class="menu">
+        <FButton
+            icon="event"
+            @click="toggleEvent"
+        >
+            Toggle event
+        </FButton>
         <FButtonGroup
             v-model="backgroundColor"
             :options="backgroundColorOptions"
@@ -27,7 +33,7 @@
 
 <script setup lang="ts">
 import {EElementType, FButton, FButtonGroup, TIconOptions} from "@ferris-wheel/design";
-import {safeSyncQueue, syncing} from "@/lib/spotify/player.ts";
+import {displayEvent, safeSyncQueue, syncing} from "@/lib/spotify/player.ts";
 import {backgroundColor, particleSpeed, playerStore} from "@/pages/player/lib/store.ts";
 
 async function manualSync() {
@@ -42,6 +48,10 @@ async function offlineSync() {
 
     playerStore.offline = true;
     await safeSyncQueue();
+}
+
+function toggleEvent() {
+    displayEvent.value = !displayEvent.value;
 }
 
 const particleSpeedOptions: TIconOptions = [

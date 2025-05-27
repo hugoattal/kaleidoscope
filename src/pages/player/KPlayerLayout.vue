@@ -1,5 +1,6 @@
 <template>
     <KBackground class="bokeh" />
+    <KEvents />
     <KPlayerMenu />
     <div class="content">
         <img
@@ -15,9 +16,10 @@
 import { onMounted } from "vue";
 import KBackground from "@/pages/player/components/KBackground.vue";
 import RockItLogo from "@/assets/rockit.svg";
-import {safeSyncQueue, syncQueue} from "@/lib/spotify/player.ts";
+import {safeSyncQueue} from "@/lib/spotify/player.ts";
 import KTracklist from "@/pages/player/components/KTracklist.vue";
 import KPlayerMenu from "@/pages/player/components/KPlayerMenu.vue";
+import KEvents from "@/pages/player/components/KEvents.vue";
 
 onMounted(async () => {
     await safeSyncQueue();
