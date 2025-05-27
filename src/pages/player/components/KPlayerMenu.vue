@@ -11,6 +11,7 @@
         <FButton
             icon="refresh"
             @click="manualSync"
+            :disabled="syncing"
         >
             Manual sync
         </FButton>
@@ -26,11 +27,11 @@
 
 <script setup lang="ts">
 import {EElementType, FButton, FButtonGroup, TIconOptions} from "@ferris-wheel/design";
-import {syncQueue} from "@/lib/spotify/player.ts";
+import {safeSyncQueue, syncing} from "@/lib/spotify/player.ts";
 import {backgroundColor, particleSpeed, playerStore} from "@/pages/player/lib/store.ts";
 
 async function manualSync() {
-    await syncQueue();
+    await safeSyncQueue();
 }
 
 async function offlineSync() {
@@ -40,7 +41,7 @@ async function offlineSync() {
     }
 
     playerStore.offline = true;
-    await syncQueue();
+    await safeSyncQueue();
 }
 
 const particleSpeedOptions: TIconOptions = [

@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 
-import {currentTrack, offlineNextTrack, progressMs, syncKey, syncQueue} from "@/lib/spotify/player.ts";
+import {currentTrack, offlineNextTrack, progressMs, safeSyncQueue, syncKey, syncQueue} from "@/lib/spotify/player.ts";
 import {computed, ref, watch} from "vue";
 import {useNow, whenever} from "@vueuse/core";
 import {playerStore} from "@/pages/player/lib/store.ts";
@@ -43,12 +43,8 @@ const cursorWidth = computed(() => {
 whenever(() => remaining.value <= 0, async () => {
     if (playerStore.offline) {
         offlineNextTrack();
-        try {
-            await sleep(1000);
-            await syncQueue();
-        } catch (error) {
-            console.warn("Failed to sync queue, relying on cache instead", error);
-        }
+        await sleep(1000);
+        await safeSyncQueue();
         return;
     }
 
@@ -57,12 +53,11 @@ whenever(() => remaining.value <= 0, async () => {
     for (let tryCount = 0; tryCount < 5; tryCount++) {
         await sleep(1000);
         try {
-            await syncQueue();
+            await safeSyncQueue();
             if (currentTrack.value!.id !== currentTrackId) {
                 return;
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.warn("Failed to sync queue, retrying in 1s", error);
         }
     }

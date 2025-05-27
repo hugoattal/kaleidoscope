@@ -15,12 +15,12 @@
 import { onMounted } from "vue";
 import KBackground from "@/pages/player/components/KBackground.vue";
 import RockItLogo from "@/assets/rockit.svg";
-import { syncQueue } from "@/lib/spotify/player.ts";
+import {safeSyncQueue, syncQueue} from "@/lib/spotify/player.ts";
 import KTracklist from "@/pages/player/components/KTracklist.vue";
 import KPlayerMenu from "@/pages/player/components/KPlayerMenu.vue";
 
 onMounted(async () => {
-    await syncQueue();
+    await safeSyncQueue();
 });
 </script>
 

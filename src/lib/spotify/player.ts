@@ -10,6 +10,19 @@ export const currentTrack = ref<TTrack>();
 export const nextTracks = ref<Array<TTrack>>([]);
 export const progressMs = ref(0);
 export const syncKey = ref(0);
+export const syncing = ref(false);
+
+export async function safeSyncQueue() {
+    if (!syncing.value) {
+        syncing.value = true;
+        try {
+            await syncQueue();
+        }
+        finally {
+            syncing.value = false;
+        }
+    }
+}
 
 export async function syncQueue() {
     const response = await spotifyApi("/me/player/queue");
