@@ -122,7 +122,7 @@ function displayTime(time: number): string {
 }
 
 .tracklist {
-    width: 60%;
+    width: 60vw;
     display: grid;
     gap: var(--fw-length-l);
     position: relative;
