@@ -2,9 +2,10 @@
     <div class="menu">
         <FButton
             icon="event"
-            @click="toggleEvent"
+            :type="displayEvents ? EElementType.Primary : playerStore.offline ? EElementType.Primary : EElementType.Default"
+            @click="toggleEvents"
         >
-            Toggle event
+            Toggle events
         </FButton>
         <FButtonGroup
             v-model="backgroundColor"
@@ -15,16 +16,16 @@
             :options="particleSpeedOptions"
         />
         <FButton
+            :disabled="syncing"
             icon="refresh"
             @click="manualSync"
-            :disabled="syncing"
         >
             Manual sync
         </FButton>
         <FButton
             icon="refresh"
-            @click="offlineSync"
             :type="playerStore.offline ? EElementType.Primary : EElementType.Default"
+            @click="offlineSync"
         >
             Offline sync
         </FButton>
@@ -32,9 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import {EElementType, FButton, FButtonGroup, TIconOptions} from "@ferris-wheel/design";
-import {displayEvent, safeSyncQueue, syncing} from "@/lib/spotify/player.ts";
-import {backgroundColor, particleSpeed, playerStore} from "@/pages/player/lib/store.ts";
+import { EElementType, FButton, FButtonGroup, TIconOptions } from "@ferris-wheel/design";
+import { displayEvents, safeSyncQueue, syncing } from "@/lib/spotify/player.ts";
+import { backgroundColor, particleSpeed, playerStore } from "@/pages/player/lib/store.ts";
 
 async function manualSync() {
     await safeSyncQueue();
@@ -50,8 +51,8 @@ async function offlineSync() {
     await safeSyncQueue();
 }
 
-function toggleEvent() {
-    displayEvent.value = !displayEvent.value;
+function toggleEvents() {
+    displayEvents.value = !displayEvents.value;
 }
 
 const particleSpeedOptions: TIconOptions = [

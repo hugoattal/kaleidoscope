@@ -4,9 +4,7 @@ import tseslint from "typescript-eslint";
 import pluginPromise from "eslint-plugin-promise";
 import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
 import pluginImportX from "eslint-plugin-import-x";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const compat = new FlatCompat();
+import globals from "globals";
 
 export default tseslint.config(
     {
@@ -21,6 +19,9 @@ export default tseslint.config(
     pluginImportX.flatConfigs.recommended,
     {
         languageOptions: {
+            globals: {
+                ...globals.browser
+            },
             parserOptions: {
                 parser: tseslint.parser,
                 sourceType: "module"
@@ -39,6 +40,7 @@ export default tseslint.config(
             "eol-last": ["error", "always"],
             "eqeqeq": ["error", "always"],
             "import-x/no-named-as-default-member": ["off"],
+            "import-x/order": ["error"],
             "indent": ["error", 4],
             "key-spacing": ["error"],
             "keyword-spacing": ["error"],

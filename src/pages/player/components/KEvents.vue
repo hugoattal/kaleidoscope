@@ -1,45 +1,67 @@
 <template>
-<div class="events" v-if="displayEvent">
-    Inscrivez-vous au
-    <span class="title">Summer Danse Festival</span>
-    Samedi 14 Juin 2025
-    <span class="description">4 salles, plus de 700m², cours, soirée, shows...</span>
-</div>
+    <div
+        v-if="displayEvents"
+        class="events"
+    >
+        <div class="title">
+            Prochains événements
+        </div>
+        <KEvent
+            v-for="event in events"
+            :key="event.id"
+            :event="event"
+        />
+    </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { displayEvents } from "@/lib/spotify/player.ts";
+import { TEvent } from "@/pages/player/lib/api.ts";
+import KEvent from "@/pages/player/components/KEvent.vue";
 
-import {displayEvent} from "@/lib/spotify/player.ts";
+const events = ref<Array<TEvent>>([]);
+
+onMounted(async () => {
+    const apiUrl = new URL(import.meta.env.VITE_STRAPI_API_URL);
+    apiUrl.pathname = "/api/events";
+
+    const searchParams = apiUrl.searchParams;
+    searchParams.set("sort", "startAt");
+    searchParams.set("pagination[pageSize]", "5");
+    searchParams.set("filters[endAt][$gt]", `${ Date.now() }`);
+    searchParams.set("populate", "banner");
+    searchParams.set("populate", "eventType.defaultBanner");
+
+    const request = await fetch(apiUrl.toString(), {
+        headers: {
+            "Authorization": `Bearer ${ import.meta.env.VITE_STRAPI_TOKEN }`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    const response = await request.json();
+
+    events.value = response.data;
+});
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Yesteryear&display=swap');
-
 .events {
     position: absolute;
     top: 0;
     left: 0;
     display: flex;
     flex-direction: column;
-    font-size: 28px;
-    font-weight: 600;
-    align-items: center;
     padding: var(--fw-length-xl);
-    gap: var(--fw-length-xs);
+    gap: var(--fw-length-m);
 
-    .description {
-        font-size: 20px;
-        font-weight: 400;
+    .title {
+        font-weight: bold;
+        font-style: normal;
+        font-size: var(--fw-font-size-l);
+        color: var(--fw-color-content-deep);
+        text-shadow: 0 0 12px var(--fw-color-primary);
     }
 }
-
-.title {
-    font-family: "Bonheur Royale", cursive;
-    font-weight: 600;
-    font-style: normal;
-    font-size: 58px;
-    color: var(--fw-color-content-deepest);
-    text-shadow: 0 0 12px var(--fw-color-primary), 0 0 12px var(--fw-color-primary);
-}
-
 </style>

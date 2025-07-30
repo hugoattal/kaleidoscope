@@ -1,133 +1,136 @@
 <template>
-    <TransitionGroup
-        class="tracklist"
-        name="list"
-        tag="div"
-    >
-        <div
-            v-for="track in tracks"
-            :key="track.data.id"
-            class="track"
-            :class="track.type"
+    <div class="tracklist-wrapper">
+        <TransitionGroup
+            class="tracklist"
+            name="list"
+            tag="div"
         >
-            <div class="cover">
-                <img
-                    alt="Album cover"
-                    :src="track.data.album.images[0]?.url"
-                >
-            </div>
-            <div class="content">
-                <div class="title" translate="no">
-                    <span class="name">{{ track.data.name }}</span> (<span class="artist">{{
-                        track.data.artists[0].name
-                    }}</span>)
-                </div>
-                <div
-                    v-if="track.data.features"
-                    class="features"
-                >
-                    <div class="feature-wrapper">
-                        <div class="label">
-                            <FIcon
-                                class="icon"
-                                icon="speed"
-                            />
-                            <span>Tempo (<strong>{{ Math.round(track.data.features.tempo) }}</strong> BPM)</span>
-                        </div>
-                        <KFeatureDisplay
-                            class="feature"
-                            :max="160"
-                            :min="80"
-                            :value="track.data.features.tempo"
-                        />
-                    </div>
-                    <div class="feature-wrapper">
-                        <div class="label">
-                            <FIcon
-                                class="icon"
-                                icon="trending_up"
-                            />
-                            <span>Popularité</span>
-                        </div>
-                        <KFeatureDisplay
-                            class="feature"
-                            :value="track.data.popularity/100"
-                        />
-                    </div>
-                    <div class="feature-wrapper">
-                        <div class="label">
-                            <FIcon
-                                class="icon"
-                                icon="bolt"
-                            />
-                            <span>Énergie</span>
-                        </div>
-                        <KFeatureDisplay
-                            class="feature"
-                            :value="track.data.features.energy"
-                        />
+            <div
+                v-for="track in tracks"
+                :key="track.id"
+                class="track"
+                :class="track.type"
+            >
+                <div class="cover">
+                    <img
+                        alt="Album cover"
+                        :src="track.data.album.images[0]?.url"
+                    >
+                    <div
+                        v-if="track.type !== 'current'"
+                        class="position"
+                    >
+                        {{ track.position }}
                     </div>
                 </div>
-                <KPlaybar v-if="track.type === 'current'" />
+                <div class="content">
+                    <div
+                        class="title"
+                        translate="no"
+                    >
+                        <span class="time">[{{ displayTime(track.data.duration_ms) }}]</span>
+                        {{ track.data.name }}
+                    </div>
+                    <div
+                        class="artist"
+                        translate="no"
+                    >
+                        {{ track.data.artists[0].name }}
+                    </div>
+                    <KPlaybar v-if="track.type === 'current'" />
+                </div>
             </div>
-            <div class="description">
-                {{ track.description }}
-            </div>
-        </div>
-    </TransitionGroup>
+        </TransitionGroup>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { currentTrack, nextTracks, previousTracks } from "@/lib/spotify/player.ts";
 import { computed } from "vue";
+import { currentTrack, nextTracks, previousTracks } from "@/lib/spotify/player.ts";
 import { TTrack } from "@/lib/store.ts";
 import KPlaybar from "@/pages/player/components/KPlaybar.vue";
-import KFeatureDisplay from "@/pages/player/components/KFeatureDisplay.vue";
-import { FIcon } from "@ferris-wheel/design";
 
-const lastTrack = computed(() => previousTracks.value.at(-1));
-const comingTracks = computed(() => nextTracks.value.slice(0, 3));
+const lastTrack = computed(() => previousTracks.value.toReversed().slice(0, 2));
+const comingTracks = computed(() => nextTracks.value.slice(0, 6));
 
 const tracks = computed(() => {
-    const result: Array<{ type: string; data: TTrack; description: string; }> = [];
+    const result: Array<{ id: string; type: string; data: TTrack; position: number }> = [];
+    const ids = new Set<string>();
 
-    if (lastTrack.value) {
+    function getId(id: string) {
+        if (!ids.has(id)) {
+            ids.add(id);
+            return id;
+        }
+
+        return getId(`${ id }x`);
+    }
+
+    if (lastTrack.value[0]) {
         result.push({
+            id: getId(lastTrack.value[0].id),
             type: "last",
-            data: lastTrack.value,
-            description: "Dernière"
+            data: lastTrack.value[0],
+            position: -2
+        });
+    }
+
+    if (lastTrack.value[1]) {
+        result.push({
+            id: getId(lastTrack.value[1].id),
+            type: "last",
+            data: lastTrack.value[1],
+            position: -1
         });
     }
 
     if (currentTrack.value) {
         result.push({
+            id: getId(currentTrack.value.id),
             type: "current",
             data: currentTrack.value,
-            description: "En cours"
+            position: 0
         });
     }
 
     for (const [index, track] of comingTracks.value.entries()) {
         result.push({
+            id: getId(track.id),
             type: "next",
             data: track,
-            description: `Prochaine ${ index + 1 }`
+            position: index + 1
         });
     }
 
     return result;
 });
+
+function displayTime(time: number): string {
+    const minutes = Math.floor(time / 60000);
+    const seconds = Math.floor((time % 60000) / 1000);
+    return `${ minutes }:${ seconds.toString().padStart(2, "0") }`;
+}
 </script>
 
 <style scoped>
-.tracklist {
+.tracklist-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--fw-length-l);
     margin: var(--fw-length-xl) 0;
+}
+
+.tracklist {
+    width: 60%;
+    display: grid;
+    gap: var(--fw-length-l);
     position: relative;
+    grid-template-columns: 1fr 1fr;
+
+    .current {
+        grid-column: span 2;
+    }
 
     .track {
         display: flex;
@@ -136,7 +139,7 @@ const tracks = computed(() => {
         background: #1c0b0b88;
         padding: var(--fw-length-m);
         border-radius: var(--fw-length-xl);
-        width: 60%;
+        width: 100%;
         box-shadow: 0 8px 16px #13050588;
         position: relative;
         transition: all 0.5s ease;
@@ -153,84 +156,58 @@ const tracks = computed(() => {
             gap: var(--fw-length-s);
         }
 
-        .title {
+        .artist, .title {
             transition: all 0.5s ease;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--fw-color-content-deepest);
+
+            .time {
+                font-weight: normal;
+                color: var(--fw-color-content-liter);
+            }
+        }
+
+        .artist {
             font-size: 28px;
-            color: var(--fw-color-content-lite);
-
-            .name {
-                transition: all 0.5s ease;
-                font-size: 32px;
-                font-weight: bold;
-                color: var(--fw-color-content-deepest);
-            }
-
-            .artist {
-                color: var(--fw-color-content-deeper);
-            }
+            color: var(--fw-color-content-deep);
         }
 
         .cover {
             transition: all 0.5s ease;
             width: 128px;
             height: 128px;
+            position: relative;
 
             img {
                 transition: all 0.5s ease;
                 border-radius: var(--fw-radius-l);
                 width: 100%;
             }
-        }
 
-        .features {
-            display: flex;
-            gap: var(--fw-length-m);
-
-            .feature-wrapper {
+            .position {
+                position: absolute;
+                inset: 0;
                 display: flex;
-                flex-direction: column;
-                gap: var(--fw-length-xxs);
-                font-size: var(--fw-font-size-m);
-                color: var(--fw-color-content);
-
-                .label {
-                    display: flex;
-                    align-items: center;
-                    gap: var(--fw-length-xxs);
-
-                    .icon {
-                        color: var(--fw-color-content-deepest);
-                    }
-                }
-
-                strong {
-                    color: var(--fw-color-content-deepest);
-                }
-
-                .feature {
-                    transition: all 0.5s ease;
-                    height: 10px;
-                    width: 180px;
-                }
+                align-items: center;
+                justify-content: center;
+                font-size: var(--fw-font-size-xxl);
+                text-shadow: 0 0 16px black, 0 0 8px black;
+                font-weight: bold;
+                color: var(--fw-color-content-deepest);
             }
-        }
-
-        .description {
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: var(--fw-length-s) var(--fw-length-l);
-            font-style: italic;
-            color: var(--fw-color-content-litest);
         }
     }
 
     .next, .last {
-        width: 40%;
+        width: 100%;
         border-radius: var(--fw-length-l);
         background: #1c0b0b44;
         grid-template-columns: 48px 1fr;
-        border-color: transparent;
+        border-color: var(--fw-color-content-softest);
 
         .content {
             opacity: 0.5;
@@ -238,22 +215,11 @@ const tracks = computed(() => {
         }
 
         .title {
-            font-size: 14px;
-
-            .name {
-                font-size: 20px;
-            }
+            font-size: 20px;
         }
 
-        .features {
-            .feature-wrapper {
-                font-size: var(--fw-font-size-s);
-
-                .feature {
-                    height: 6px;
-                    width: 128px;
-                }
-            }
+        .artist {
+            font-size: 14px;
         }
 
         .cover {

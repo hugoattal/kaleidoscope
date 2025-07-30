@@ -90,8 +90,8 @@ async function sleep(time = 1000) {
     .remaining {
         position: absolute;
         right: 0;
-        top: -24px;
-        font-size: var(--fw-font-size-m);
+        top: -28px;
+        font-size: var(--fw-font-size-l);
         color: var(--fw-color-content-lite);
     }
 }
