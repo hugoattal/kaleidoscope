@@ -144,6 +144,7 @@ function displayTime(time: number): string {
         position: relative;
         transition: all 0.5s ease;
         border: 1px solid #f2920055;
+        overflow: hidden;
 
         &.list-leave-active {
             position: absolute;
@@ -158,6 +159,7 @@ function displayTime(time: number): string {
 
         .artist, .title {
             transition: all 0.5s ease;
+            white-space: nowrap;
         }
 
         .title {
@@ -177,6 +179,7 @@ function displayTime(time: number): string {
         }
 
         .cover {
+            flex: 0 0 128px;
             transition: all 0.5s ease;
             width: 128px;
             height: 128px;
@@ -215,14 +218,15 @@ function displayTime(time: number): string {
         }
 
         .title {
-            font-size: 20px;
+            font-size: 22px;
         }
 
         .artist {
-            font-size: 14px;
+            font-size: 18px;
         }
 
         .cover {
+            flex: 0 0 64px;
             width: 64px;
             height: 64px;
             opacity: 0.5;

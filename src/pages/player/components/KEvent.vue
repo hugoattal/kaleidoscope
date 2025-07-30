@@ -66,7 +66,7 @@ const formattedDate = computed(() => {
         background-size: cover;
         background-position: center;
         background-image: v-bind(banner);
-        opacity: 0.33;
+        opacity: 0.25;
         position: relative;
 
         .gradient {
