@@ -23,18 +23,18 @@ const props = defineProps<{
 }>();
 
 const title = computed(() => {
-    const prefix = props.event.attributes.titlePrefix || props.event.attributes.eventType.data.attributes.defaultTitlePrefix || "";
-    const suffix = props.event.attributes.titleSuffix || props.event.attributes.eventType.data.attributes.defaultTitleSuffix || "";
+    const prefix = props.event.titlePrefix || props.event.eventType?.defaultTitlePrefix || "";
+    const suffix = props.event.titleSuffix || props.event.eventType?.defaultTitleSuffix || "";
     return `${ prefix } ${ suffix }`.trim();
 });
 
 const banner = computed(() => {
-    const url = props.event.attributes.banner?.data.attributes.url || props.event.attributes.eventType.data.attributes.defaultBanner.data.attributes.url;
+    const url = props.event.banner?.url || props.event.eventType?.defaultBanner?.url || "";
     return `url(${ url })`;
 });
 
 const formattedDate = computed(() => {
-    const date = new Date(props.event.attributes.startAt);
+    const date = new Date(props.event.startAt);
     return new Intl.DateTimeFormat("fr-FR", {
         day: "numeric",
         hour: "2-digit",

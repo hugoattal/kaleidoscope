@@ -27,11 +27,17 @@ onMounted(async () => {
     apiUrl.pathname = "/api/events";
 
     const searchParams = apiUrl.searchParams;
+    // Strapi v5 : sans `status=published`, l'API renvoie draft + published
+    // → chaque event dupliqué ("tourne en boucle"). Cf migration v4 → v5.
+    searchParams.set("status", "published");
     searchParams.set("sort", "startAt");
     searchParams.set("pagination[pageSize]", "5");
-    searchParams.set("filters[endAt][$gt]", `${ Date.now() }`);
-    searchParams.set("populate", "banner");
-    searchParams.set("populate", "eventType.defaultBanner");
+    // endAt est un datetime ISO côté Strapi : comparer à une date ISO, pas à un ms.
+    searchParams.set("filters[endAt][$gt]", new Date().toISOString());
+    // populate imbriqué : deux `set("populate", ...)` s'écrasaient (set, pas append)
+    // → seul le dernier était pris en compte. Syntaxe v5 par clés imbriquées.
+    searchParams.set("populate[banner]", "true");
+    searchParams.set("populate[eventType][populate][defaultBanner]", "true");
 
     const request = await fetch(apiUrl.toString(), {
         headers: {
