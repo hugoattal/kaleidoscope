@@ -75,11 +75,7 @@ const formattedDate = computed(() => {
     border-radius: var(--fw-length-l);
     overflow: hidden;
     position: relative;
-    border: 1px solid color-mix(
-        in lch,
-        var(--fw-color-content-softest) 82%,
-        var(--fw-color-primary-deepest)
-    );
+    border: 1px solid var(--fw-color-content-softer);
 
     .banner {
         width: 100%;

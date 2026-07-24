@@ -108,8 +108,8 @@ function displayTime(time: number): string {
 <style scoped>
 .tracklist-wrapper {
     --track-background: color-mix(in srgb, var(--fw-color-background-deepest) 53%, transparent);
-    --track-background-muted: color-mix(in srgb, var(--fw-color-background-deepest) 27%, transparent);
-    --track-border: color-mix(in srgb, var(--fw-color-primary) 33%, transparent);
+    --track-background-muted: color-mix(in srgb, var(--fw-color-background-deepest) 50%, transparent);
+    --track-border: var(--fw-color-primary-deepest);
     --track-shadow: color-mix(in srgb, var(--fw-color-background-deepest) 53%, transparent);
 
     width: 100%;
@@ -122,21 +122,15 @@ function displayTime(time: number): string {
 .tracklist {
     width: 60vw;
     display: grid;
-    gap: var(--fw-length-l);
+    gap: var(--fw-length-m);
     position: relative;
     grid-template-columns: 1fr 1fr;
 
-    .current {
-        grid-column: span 2;
-    }
-
     .track {
         display: flex;
-        column-gap: var(--fw-length-m);
         backdrop-filter: blur(16px);
         background: var(--track-background);
-        padding: var(--fw-length-m);
-        border-radius: var(--fw-length-xl);
+        border-radius: var(--fw-length-m);
         box-shadow: 0 8px 16px var(--track-shadow);
         position: relative;
         transition:
@@ -148,13 +142,20 @@ function displayTime(time: number): string {
         border: 1px solid var(--track-border);
         overflow: hidden;
 
+        &.current {
+            grid-column: span 2;
+            box-shadow: 0 0 16px var(--fw-color-primary-deepest);
+        }
+
         &.list-leave-active {
             position: absolute;
         }
 
         .content {
             display: flex;
+            padding: var(--fw-length-m);
             flex: 1 1 auto;
+            min-width: 0;
             flex-direction: column;
             gap: var(--fw-length-s);
             transition: opacity 0.5s ease;
@@ -165,6 +166,8 @@ function displayTime(time: number): string {
                 color 0.5s ease,
                 font-size 0.5s ease;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .title {
@@ -184,19 +187,18 @@ function displayTime(time: number): string {
         }
 
         .cover {
-            flex: 0 0 128px;
+            flex: 0 0 160px;
             transition:
                 flex-basis 0.5s ease,
                 height 0.5s ease,
                 opacity 0.5s ease,
                 width 0.5s ease;
-            width: 128px;
-            height: 128px;
+            width: 160px;
+            height: 160px;
             position: relative;
 
             img {
                 transition: border-radius 0.5s ease;
-                border-radius: var(--fw-radius-l);
                 width: 100%;
             }
 
@@ -215,9 +217,9 @@ function displayTime(time: number): string {
     }
 
     .next, .last {
-        border-radius: var(--fw-length-l);
+        border-radius: var(--fw-length-m);
         background: var(--track-background-muted);
-        border-color: var(--fw-color-content-softest);
+        border-color: var(--fw-color-content-softer);
 
         .content {
             opacity: 0.5;
@@ -233,13 +235,13 @@ function displayTime(time: number): string {
         }
 
         .cover {
-            flex: 0 0 64px;
-            width: 64px;
-            height: 64px;
+            flex: 0 0 96px;
+            width: 96px;
+            height: 96px;
             opacity: 0.5;
 
             img {
-                border-radius: var(--fw-radius-m);
+                border-radius: var(--fw-radius-s);
             }
         }
     }
