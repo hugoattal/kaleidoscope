@@ -24,6 +24,9 @@ importers:
       '@luna-park/eslint-config':
         specifier: ^1.3.0
         version: 1.3.0(6550666f807e81ce3c5b5c9465639136)
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.8
+        version: 6.0.8(vite@8.1.5(jiti@2.7.0)(sass@1.101.6)(yaml@2.9.0))(vue@3.5.40(typescript@6.0.3))
       eslint:
         specifier: ^10.7.0
         version: 10.7.0(jiti@2.7.0)(supports-color@10.2.2)
