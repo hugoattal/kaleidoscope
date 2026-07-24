@@ -46,7 +46,7 @@ onMounted(async () => {
     padding: var(--fw-length-xl);
 
     &.with-events {
-        padding-left: calc(280px + var(--fw-length-xxl));
+        padding-left: calc(var(--player-events-width) + var(--fw-length-xxl));
     }
 
     .logo {
@@ -57,8 +57,9 @@ onMounted(async () => {
 </style>
 
 <style>
-:root{
+:root {
     --fw-config-primary-hue: 60deg;
     --fw-config-content-hue: 60deg;
+    --player-events-width: 360px;
 }
 </style>
