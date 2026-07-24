@@ -6,39 +6,43 @@
             tag="div"
         >
             <div
-                v-for="track in tracks"
-                :key="track.id"
-                class="track"
-                :class="track.type"
+                v-for="item in tracklistItems"
+                :key="item.id"
+                :class="item.kind === 'track' ? ['track', item.type] : 'section-title'"
             >
-                <div class="cover">
-                    <img
-                        alt="Album cover"
-                        :src="track.data.album.images[0]?.url"
-                    >
+                <template v-if="item.kind === 'track'">
+                    <div class="cover">
+                        <img
+                            alt="Album cover"
+                            :src="item.data.album.images[0]?.url"
+                        >
+                    </div>
+                    <div class="content">
+                        <div
+                            class="title"
+                            translate="no"
+                        >
+                            <span class="name">{{ item.data.name }}</span>
+                            <span class="time">{{ displayTime(item.data.duration_ms) }}</span>
+                        </div>
+                        <div
+                            class="artist"
+                            translate="no"
+                        >
+                            {{ item.data.artists[0].name }}
+                        </div>
+                        <KPlaybar v-if="item.type === 'current'" />
+                    </div>
                     <div
-                        v-if="track.type !== 'current'"
+                        v-if="item.type !== 'current'"
                         class="position"
                     >
-                        {{ track.position }}
+                        {{ item.position }}
                     </div>
-                </div>
-                <div class="content">
-                    <div
-                        class="title"
-                        translate="no"
-                    >
-                        <span class="name">{{ track.data.name }}</span>
-                        <span class="time">{{ displayTime(track.data.duration_ms) }}</span>
-                    </div>
-                    <div
-                        class="artist"
-                        translate="no"
-                    >
-                        {{ track.data.artists[0].name }}
-                    </div>
-                    <KPlaybar v-if="track.type === 'current'" />
-                </div>
+                </template>
+                <template v-else>
+                    {{ item.label }}
+                </template>
             </div>
         </TransitionGroup>
     </div>
@@ -54,15 +58,22 @@ import KPlaybar from "@/pages/player/components/KPlaybar.vue";
 type TTracklistItem = {
     id: string;
     data: TTrack;
+    kind: "track";
     position: number;
     type: "last" | "current" | "next";
+};
+
+type TTracklistSection = {
+    id: string;
+    kind: "section";
+    label: string;
 };
 
 const lastTracks = computed(() => previousTracks.value.slice(-2));
 const comingTracks = computed(() => nextTracks.value.slice(0, 6));
 
-const tracks = computed<Array<TTracklistItem>>(() => {
-    const result: Array<TTracklistItem> = [];
+const tracklistItems = computed<Array<TTracklistItem | TTracklistSection>>(() => {
+    const result: Array<TTracklistItem | TTracklistSection> = [];
     const ids = new Set<string>();
 
     function getId(id: string) {
@@ -74,25 +85,43 @@ const tracks = computed<Array<TTracklistItem>>(() => {
         return getId(`${ id }x`);
     }
 
+    function addSection(id: string, label: string) {
+        result.push({
+            id,
+            kind: "section",
+            label
+        });
+    }
+
     function addTrack(data: TTrack, position: number, type: TTracklistItem["type"]) {
         result.push({
             id: getId(data.id),
             data,
+            kind: "track",
             position,
             type
         });
     }
 
-    for (const [index, track] of lastTracks.value.entries()) {
-        addTrack(track, index - lastTracks.value.length, "last");
+    if (lastTracks.value.length) {
+        addSection("section-last", "Récemment");
+
+        for (const [index, track] of lastTracks.value.entries()) {
+            addTrack(track, index - lastTracks.value.length, "last");
+        }
     }
 
     if (currentTrack.value) {
+        addSection("section-current", "En cours");
         addTrack(currentTrack.value, 0, "current");
     }
 
-    for (const [index, track] of comingTracks.value.entries()) {
-        addTrack(track, index + 1, "next");
+    if (comingTracks.value.length) {
+        addSection("section-next", "À suivre");
+
+        for (const [index, track] of comingTracks.value.entries()) {
+            addTrack(track, index + 1, "next");
+        }
     }
 
     return result;
@@ -111,6 +140,8 @@ function displayTime(time: number): string {
     --track-background-muted: color-mix(in srgb, var(--fw-color-background-deepest) 50%, transparent);
     --track-border: var(--fw-color-primary-deepest);
     --track-shadow: color-mix(in srgb, var(--fw-color-background-deepest) 53%, transparent);
+    --track-position-background: var(--fw-color-primary);
+    --track-position-size: 2.25rem;
 
     width: 100%;
     display: flex;
@@ -122,9 +153,19 @@ function displayTime(time: number): string {
 .tracklist {
     width: 60vw;
     display: grid;
-    gap: var(--fw-length-m);
+    gap: var(--fw-length-s);
     position: relative;
     grid-template-columns: 1fr 1fr;
+
+    .section-title {
+        grid-column: 1 / -1;
+        color: var(--fw-color-content-deep);
+        font-size: 18px;
+        font-weight: bold;
+        transition:
+            opacity 0.5s ease,
+            transform 0.5s ease;
+    }
 
     .track {
         display: flex;
@@ -157,7 +198,7 @@ function displayTime(time: number): string {
             flex: 1 1 auto;
             min-width: 0;
             flex-direction: column;
-            gap: var(--fw-length-s);
+            gap: var(--fw-length-xs);
             transition: opacity 0.5s ease;
         }
 
@@ -174,7 +215,7 @@ function displayTime(time: number): string {
             display: flex;
             align-items: baseline;
             gap: var(--fw-length-s);
-            font-size: 32px;
+            font-size: 42px;
             font-weight: bold;
             color: var(--fw-color-content-deepest);
 
@@ -190,13 +231,26 @@ function displayTime(time: number): string {
                 font-weight: normal;
                 font-size: 0.75em;
                 font-variant-numeric: tabular-nums;
-                color: var(--fw-color-content-liter);
+                color: var(--fw-color-content-lite);
             }
         }
 
         .artist {
             font-size: 28px;
             color: var(--fw-color-content-deep);
+        }
+
+        .position {
+            position: absolute;
+            right: var(--fw-length-s);
+            bottom: var(--fw-length-s);
+            padding: 0 var(--fw-length-xs);
+            border: 1px solid var(--fw-color-primary-liter);
+            border-radius: var(--fw-radius-m);
+            background: var(--track-position-background);
+            color: var(--fw-color-background-deepest);
+            font-size: var(--fw-font-size-m);
+            font-weight: bold;
         }
 
         .cover {
@@ -214,18 +268,6 @@ function displayTime(time: number): string {
                 transition: border-radius 0.5s ease;
                 width: 100%;
             }
-
-            .position {
-                position: absolute;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: var(--fw-font-size-xxl);
-                text-shadow: 0 0 16px black, 0 0 8px black;
-                font-weight: bold;
-                color: var(--fw-color-content-deepest);
-            }
         }
     }
 
@@ -240,7 +282,7 @@ function displayTime(time: number): string {
         }
 
         .title {
-            font-size: 22px;
+            font-size: 28px;
         }
 
         .artist {
