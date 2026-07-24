@@ -134,7 +134,7 @@ onMounted(loadEvents);
         flex-direction: column;
         margin: 0;
         padding: 0;
-        gap: var(--fw-length-l);
+        gap: var(--fw-length-m);
         overflow-y: auto;
         scrollbar-color: color-mix(in lch, var(--fw-color-primary) 28%, transparent) transparent;
         scrollbar-width: thin;

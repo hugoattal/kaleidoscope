@@ -28,8 +28,8 @@
                         class="title"
                         translate="no"
                     >
-                        <span class="time">[{{ displayTime(track.data.duration_ms) }}]</span>
-                        {{ track.data.name }}
+                        <span class="name">{{ track.data.name }}</span>
+                        <span class="time">{{ displayTime(track.data.duration_ms) }}</span>
                     </div>
                     <div
                         class="artist"
@@ -171,12 +171,25 @@ function displayTime(time: number): string {
         }
 
         .title {
+            display: flex;
+            align-items: baseline;
+            gap: var(--fw-length-s);
             font-size: 32px;
             font-weight: bold;
             color: var(--fw-color-content-deepest);
 
+            .name {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
             .time {
+                flex: none;
+                margin-left: auto;
                 font-weight: normal;
+                font-size: 0.75em;
+                font-variant-numeric: tabular-nums;
                 color: var(--fw-color-content-liter);
             }
         }

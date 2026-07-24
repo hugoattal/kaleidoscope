@@ -72,7 +72,7 @@ const formattedDate = computed(() => {
     flex-direction: column;
     align-items: center;
     backdrop-filter: blur(16px);
-    border-radius: var(--fw-length-l);
+    border-radius: var(--fw-length-m);
     overflow: hidden;
     position: relative;
     border: 1px solid var(--fw-color-content-softer);
