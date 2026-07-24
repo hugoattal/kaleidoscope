@@ -22,7 +22,7 @@ watch(() => store.selectedPlaylist, async (playlistId) => {
 
     store.tracks = await getPlaylist(playlistId);
 
-    await processTracks();
+    processTracks();
 }, {
     flush: "sync"
 });

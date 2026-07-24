@@ -1,19 +1,38 @@
 import { TTrack } from "@/lib/store.ts";
-import { spotifyApi, spotifyApiList } from "@/lib/spotify/api.ts";
-import { userId } from "@/lib/spotify/local.ts";
+import { spotifyApiList } from "@/lib/spotify/api.ts";
 
-export const cache = {
-    features: {} as Record<string, TTrack>,
-    playlists: {} as Record<string, Array<TTrack>>
-} as {
-    features: Record<string, TTrack>;
+type TPlaylistSummary = {
+    id: string;
+    name: string;
+};
+
+type TSpotifyTrack = Omit<TTrack, "total_duration">;
+
+type TPlaylistItem = {
+    item: TSpotifyTrack | {
+        id: string;
+        type: "episode";
+    };
+};
+
+type TSpotifyCache = {
     playlists: Record<string, Array<TTrack>>;
-    userPlaylists?: Array<{ id: string; name: string }>;
+    userPlaylists?: Array<TPlaylistSummary>;
+};
+
+export const cache: TSpotifyCache = {
+    playlists: {}
 };
 
 export async function getPlaylist(playlistId: string) {
     if (!cache.playlists[playlistId]) {
-        cache.playlists[playlistId] = (await spotifyApiList(`/playlists/${ playlistId }/tracks?fields=next,items(track(id,popularity,name,artists(name),duration_ms,album(release_date,images(url))))`)).map((item: any) => item.track);
+        const items = await spotifyApiList<TPlaylistItem>(`/playlists/${ playlistId }/items?fields=next,items(item(type,id,name,artists(name),duration_ms,album(release_date,images(url))))`);
+        cache.playlists[playlistId] = items
+            .filter((item): item is { item: TSpotifyTrack } => item.item.type === "track")
+            .map((item) => ({
+                ...item.item,
+                total_duration: 0
+            }));
     }
 
     return cache.playlists[playlistId];
@@ -21,7 +40,7 @@ export async function getPlaylist(playlistId: string) {
 
 export async function getUserPlaylists() {
     if (!cache.userPlaylists) {
-        cache.userPlaylists = await spotifyApiList(`/users/${ userId.value }/playlists`);
+        cache.userPlaylists = await spotifyApiList<TPlaylistSummary>("/me/playlists");
     }
 
     return cache.userPlaylists;

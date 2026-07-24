@@ -144,7 +144,7 @@ async function generate() {
         }
     }
 
-    await processTracks();
+    processTracks();
 }
 
 async function generateProgress(playlists: Array<Array<TTrack>>) {

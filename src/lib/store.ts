@@ -3,6 +3,7 @@ import { reactive } from "vue";
 export type TTrack = {
     id: string;
     name: string;
+    type: "track";
     album: {
         release_date: string;
         images: Array<{
@@ -13,13 +14,6 @@ export type TTrack = {
         name: string;
     }>;
     duration_ms: number;
-    features: {
-        danceability: number;
-        energy: number;
-        tempo: number;
-        valence: number;
-    };
-    popularity: number;
     total_duration: number;
 }
 

@@ -4,12 +4,12 @@ const imageHandles = new Map<string, HTMLImageElement>(); // Keep a reference to
 
 export function preloadAlbums() {
     for (const track of nextTracks.value) {
-        const url = track.album.images[0].url;
+        const image = track.album.images[0];
 
-        if (!imageHandles.has(url)) {
-            const image = new Image();
-            image.src = track.album.images[0].url;
-            imageHandles.set(url, image);
+        if (image && !imageHandles.has(image.url)) {
+            const imageHandle = new Image();
+            imageHandle.src = image.url;
+            imageHandles.set(image.url, imageHandle);
         }
     }
 }

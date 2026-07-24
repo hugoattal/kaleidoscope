@@ -13,12 +13,10 @@
 import { FButton } from "@ferris-wheel/design";
 import { onMounted } from "vue";
 import { getToken, requestAuthorization } from "@/lib/spotify";
-import { accessToken, authorizationCode } from "@/lib/spotify/local.ts";
+import { accessToken, disconnect } from "@/lib/spotify/local.ts";
 
 function connect() {
-    authorizationCode.value = "";
-    accessToken.value = "";
-
+    disconnect();
     requestAuthorization();
 }
 
@@ -27,12 +25,22 @@ onMounted(async () => {
         return;
     }
 
-    const code = new URLSearchParams(window.location.search).get("code");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
 
     if (code) {
-        authorizationCode.value = code;
-        await getToken();
-        alert("Connected to Spotify!");
+        const url = new URL(window.location.href);
+        url.search = "";
+        window.history.replaceState({}, "", url);
+
+        try {
+            await getToken(code, params.get("state"));
+            alert("Connected to Spotify!");
+        }
+        catch (error) {
+            const message = error instanceof Error ? error.message : "Failed to connect to Spotify";
+            alert(message);
+        }
     }
 });
 </script>

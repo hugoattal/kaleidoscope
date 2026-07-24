@@ -49,51 +49,6 @@
                 :value="getYear(track.album.release_date)"
             />
         </td>
-        <td>
-            <KPercentageDisplay :value="track.popularity/100" />
-        </td>
-        <td>
-            <KPercentageDisplay
-                v-if="track.features"
-                :max="160"
-                :min="80"
-                :value="track.features.tempo"
-            />
-            <span
-                v-else
-                class="loading"
-            >Loading...</span>
-        </td>
-        <td>
-            <KPercentageDisplay
-                v-if="track.features"
-                :value="track.features.danceability"
-            />
-            <span
-                v-else
-                class="loading"
-            >Loading...</span>
-        </td>
-        <td>
-            <KPercentageDisplay
-                v-if="track.features"
-                :value="track.features.energy"
-            />
-            <span
-                v-else
-                class="loading"
-            >Loading...</span>
-        </td>
-        <td>
-            <KPercentageDisplay
-                v-if="track.features"
-                :value="track.features.valence"
-            />
-            <span
-                v-else
-                class="loading"
-            >Loading...</span>
-        </td>
         <div
             v-if="moveStore.moveSource"
             class="drop-zone before"
@@ -121,7 +76,7 @@
 
 <script setup lang="ts">
 import { FIcon } from "@ferris-wheel/design";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import KPercentageDisplay from "@/pages/builder/components/form/KPercentageDisplay.vue";
 import { computeTotalDuration, moveStore, store, TTrack } from "@/lib/store.ts";
 
@@ -131,8 +86,6 @@ const props = defineProps<{
     index: number;
     track: TTrack;
 }>();
-
-const isReady = computed(() => props.track.album && props.track.artists && props.track.features);
 
 function getYear(date: string) {
     return new Date(date).getFullYear();
@@ -258,10 +211,6 @@ function displayTime(ms: number) {
                 background: var(--fw-color-primary);
             }
         }
-    }
-
-    .loading {
-        color: var(--fw-color-content-litest);
     }
 }
 </style>

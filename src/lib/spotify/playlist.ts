@@ -1,27 +1,30 @@
 import { spotifyApi } from "@/lib/spotify/api.ts";
-import { userId } from "@/lib/spotify/local.ts";
 
 export async function saveToPlaylist(playlistId: string, tracks: Array<string>) {
-    for (let i = 0; i < tracks.length; i += 100) {
-        await spotifyApi(`/playlists/${ playlistId }/tracks`, {
-            body: JSON.stringify({ tracks: tracks.slice(i, i + 100).map((id) => ({ uri: `spotify:track:${ id }` })) }),
-            method: "DELETE"
-        });
-    }
+    const uris = tracks.map((id) => `spotify:track:${ id }`);
 
-    for (let i = 0; i < tracks.length; i += 100) {
-        await spotifyApi(`/playlists/${ playlistId }/tracks`, {
-            body: JSON.stringify({ uris: tracks.slice(i, i + 100).map((id) => `spotify:track:${ id }`) }),
+    await spotifyApi(`/playlists/${ playlistId }/items`, {
+        body: JSON.stringify({ uris: uris.slice(0, 100) }),
+        method: "PUT"
+    });
+
+    for (let i = 100; i < uris.length; i += 100) {
+        await spotifyApi(`/playlists/${ playlistId }/items`, {
+            body: JSON.stringify({ uris: uris.slice(i, i + 100) }),
             method: "POST"
         });
     }
 }
 
 export async function createPlaylist(name: string, tracks: Array<string>) {
-    const { id } = await spotifyApi(`/users/${ userId.value }/playlists`, {
+    const playlist = await spotifyApi<{ id: string }>("/me/playlists", {
         body: JSON.stringify({ name: name || "KS Export" }),
         method: "POST"
     });
 
-    await saveToPlaylist(id, tracks);
+    if (!playlist) {
+        throw new Error("Spotify returned no playlist after creation");
+    }
+
+    await saveToPlaylist(playlist.id, tracks);
 }

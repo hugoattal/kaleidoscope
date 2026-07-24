@@ -12,21 +12,6 @@
                 <th class="value">
                     Release
                 </th>
-                <th class="value">
-                    Popularity
-                </th>
-                <th class="value">
-                    Tempo
-                </th>
-                <th class="value">
-                    Dance
-                </th>
-                <th class="value">
-                    Energy
-                </th>
-                <th class="value">
-                    Positive
-                </th>
             </tr>
             <KTrack
                 v-for="(track, index) of store.tracks"
@@ -55,12 +40,6 @@
             >
                 Shuffle
             </FButton>
-            <FButton
-                icon="category"
-                @click="autoSort"
-            >
-                Smart sort
-            </FButton>
         </div>
     </div>
 </template>
@@ -69,7 +48,7 @@
 import { FButton } from "@ferris-wheel/design";
 import { store } from "@/lib/store.ts";
 import KTrack from "@/pages/builder/components/tracks/KTrack.vue";
-import { autoSort, shuffle } from "@/lib/sort";
+import { shuffle } from "@/lib/sort";
 import { createPlaylist, saveToPlaylist } from "@/lib/spotify/playlist.ts";
 
 async function savePlaylist() {

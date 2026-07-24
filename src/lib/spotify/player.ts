@@ -4,6 +4,22 @@ import { TTrack } from "@/lib/store.ts";
 import { playerStore } from "@/pages/player/lib/store.ts";
 import { preloadAlbums } from "@/lib/spotify/offline.ts";
 
+type TSpotifyTrack = Omit<TTrack, "total_duration">;
+
+type TPlaybackItem = TSpotifyTrack | {
+    id: string;
+    type: "episode";
+};
+
+type TQueueResponse = {
+    currently_playing: TPlaybackItem | null;
+    queue: Array<TPlaybackItem>;
+};
+
+type TPlaybackResponse = {
+    progress_ms: number | null;
+};
+
 export const previousTracks = ref<Array<TTrack>>([]);
 export const currentTrack = ref<TTrack>();
 export const nextTracks = ref<Array<TTrack>>([]);
@@ -12,46 +28,51 @@ export const syncKey = ref(0);
 export const syncing = ref(false);
 export const displayEvents = ref(true);
 
+let syncPromise: Promise<void> | undefined;
 
-export async function safeSyncQueue() {
-    if (!syncing.value) {
-        syncing.value = true;
-        try {
-            await syncQueue();
-        }
-        finally {
-            syncing.value = false;
-        }
+export function safeSyncQueue() {
+    if (syncPromise) {
+        return syncPromise;
     }
+
+    syncing.value = true;
+    syncPromise = syncQueue().finally(() => {
+        syncing.value = false;
+        syncPromise = undefined;
+    });
+
+    return syncPromise;
 }
 
 export async function syncQueue() {
-    const response = await spotifyApi("/me/player/queue");
+    const response = await spotifyApi<TQueueResponse>("/me/player/queue");
 
-    if (!response.currently_playing) {
+    if (!response || response.currently_playing?.type !== "track") {
+        currentTrack.value = undefined;
+        nextTracks.value = response?.queue
+            .filter(isTrack)
+            .map(toTrack) ?? [];
+        progressMs.value = 0;
+        syncKey.value++;
         return;
     }
 
-    if (!currentTrack.value || currentTrack.value.id !== response.currently_playing.id) {
+    const playing = toTrack(response.currently_playing);
+
+    if (!currentTrack.value || currentTrack.value.id !== playing.id) {
         if (currentTrack.value) {
             previousTracks.value.push(currentTrack.value);
         }
         else if (!previousTracks.value.length) {
-            previousTracks.value = [response.currently_playing, response.currently_playing];
+            previousTracks.value = [playing, playing];
         }
 
-        if (response.currently_playing.id === nextTracks.value[0]?.id && response.queue[0]?.id === nextTracks.value[1]?.id) {
-            currentTrack.value = nextTracks.value.shift();
-
-            setTimeout(async () => {
-                nextTracks.value = response.queue;
-            }, 3000);
-        }
-        else {
-            currentTrack.value = response.currently_playing;
-            nextTracks.value = response.queue;
-        }
+        currentTrack.value = playing;
     }
+
+    nextTracks.value = response.queue
+        .filter(isTrack)
+        .map(toTrack);
 
     await syncPlayback();
     syncKey.value++;
@@ -75,7 +96,18 @@ export function offlineNextTrack() {
 }
 
 export async function syncPlayback() {
-    const response = await spotifyApi("/me/player");
+    const response = await spotifyApi<TPlaybackResponse>("/me/player");
 
-    progressMs.value = response.progress_ms;
+    progressMs.value = response?.progress_ms ?? 0;
+}
+
+function isTrack(item: TPlaybackItem): item is TSpotifyTrack {
+    return item.type === "track";
+}
+
+function toTrack(track: TSpotifyTrack): TTrack {
+    return {
+        ...track,
+        total_duration: 0
+    };
 }

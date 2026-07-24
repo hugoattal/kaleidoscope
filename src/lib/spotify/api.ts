@@ -4,51 +4,82 @@ import { getRefreshToken } from "@/lib/spotify/index.ts";
 
 const baseApiUrl = "https://api.spotify.com/v1";
 
-export async function spotifyApi(url: string, config?: RequestInit, refresh = true) {
+type TSpotifyErrorResponse = {
+    error: {
+        message: string;
+        status: number;
+    };
+};
+
+type TSpotifyPage<T> = {
+    items: Array<T>;
+    next: string | null;
+};
+
+export async function spotifyApi<T>(url: string, config?: RequestInit, refresh = true): Promise<T | undefined> {
     const targetUrl = url.startsWith("http") ? url : baseApiUrl + url;
+    const headers = new Headers(config?.headers);
+    headers.set("Accept", "application/json");
+    headers.set("Authorization", `Bearer ${ accessToken.value }`);
+    headers.set("Content-Type", "application/json");
 
     const response = await fetch(targetUrl, {
-        headers: {
-            "Accept": "application/json",
-            "Authorization": `Bearer ${ accessToken.value }`,
-            "Content-Type": "application/json"
-        },
-        ...config
+        ...config,
+        headers
     });
 
-    const responseJson = await response.json();
-
-    if (responseJson.error) {
-        if (responseJson.error.message === "The access token expired") {
-            if (refresh) {
-                await getRefreshToken();
-                return spotifyApi(url, config, false);
-            }
-
-            accessToken.value = "";
-        }
-
-        if (responseJson.error.status === 403) {
-            throw new Error("Unknown error");
-        }
-
-        alert(`Error: ${ responseJson.error.message }`);
-
-        await router.push({ name: "landing" });
-        throw new Error(responseJson.error.message);
+    if (response.status === 204) {
+        return;
     }
 
-    return responseJson;
+    const responseJson = await response.json() as T | TSpotifyErrorResponse;
+
+    if (response.ok) {
+        return responseJson as T;
+    }
+
+    if (response.status === 401 && refresh) {
+        try {
+            await getRefreshToken();
+        }
+        catch (error) {
+            await router.push({ name: "landing" });
+            throw error;
+        }
+
+        return spotifyApi<T>(url, config, false);
+    }
+
+    const error = responseJson as TSpotifyErrorResponse;
+
+    if (response.status === 401) {
+        accessToken.value = "";
+        await router.push({ name: "landing" });
+    }
+
+    alert(`Error: ${ error.error.message }`);
+    throw new Error(error.error.message);
 }
 
 export async function spotifyApiList<T>(url: string, config?: RequestInit) {
-    let response = await spotifyApi(url, config);
+    let response = await spotifyApi<TSpotifyPage<T>>(url, config);
+
+    if (!response) {
+        throw new Error("Spotify returned no content for a paginated request");
+    }
+
     const items = response.items;
 
     while (response.next) {
-        response = await spotifyApi(response.next);
-        items.push(...response.items);
+        const nextResponse = await spotifyApi<TSpotifyPage<T>>(response.next);
+
+        if (!nextResponse) {
+            throw new Error("Spotify returned no content for a paginated request");
+        }
+
+        response = nextResponse;
+        items.push(...nextResponse.items);
     }
 
-    return items as Array<T>;
+    return items;
 }
