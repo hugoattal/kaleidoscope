@@ -1,6 +1,6 @@
+import { getRefreshToken } from "@/lib/spotify/index.ts";
 import { accessToken } from "@/lib/spotify/local.ts";
 import router from "@/router";
-import { getRefreshToken } from "@/lib/spotify/index.ts";
 
 const baseApiUrl = "https://api.spotify.com/v1";
 

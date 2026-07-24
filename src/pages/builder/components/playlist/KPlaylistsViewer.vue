@@ -45,13 +45,14 @@
 <script setup lang="ts">
 import { EElementSize, FBox, FButton } from "@ferris-wheel/design";
 import { computed } from "vue";
+
 import { store } from "@/lib/store.ts";
 
 const playlistsById = computed(() => {
     return store.playlists.reduce((acc, playlist) => {
         acc[playlist.id] = playlist;
         return acc;
-    }, {} as Record<string, { id: string; name: string }>);
+    }, {} as Record<string, { id: string; name: string; }>);
 });
 
 function moveBack(index: number) {

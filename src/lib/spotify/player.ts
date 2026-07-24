@@ -1,8 +1,9 @@
 import { ref } from "vue";
+
 import { spotifyApi } from "@/lib/spotify/api.ts";
-import { TTrack } from "@/lib/store.ts";
-import { playerStore } from "@/pages/player/lib/store.ts";
 import { preloadAlbums } from "@/lib/spotify/offline.ts";
+import type { TTrack } from "@/lib/store.ts";
+import { playerStore } from "@/pages/player/lib/store.ts";
 
 type TSpotifyTrack = Omit<TTrack, "total_duration">;
 

@@ -1,5 +1,5 @@
-import { TTrack } from "@/lib/store.ts";
 import { spotifyApiList } from "@/lib/spotify/api.ts";
+import type { TTrack } from "@/lib/store.ts";
 
 type TPlaylistSummary = {
     id: string;
@@ -28,7 +28,7 @@ export async function getPlaylist(playlistId: string) {
     if (!cache.playlists[playlistId]) {
         const items = await spotifyApiList<TPlaylistItem>(`/playlists/${ playlistId }/items?fields=next,items(item(type,id,name,artists(name),duration_ms,album(release_date,images(url))))`);
         cache.playlists[playlistId] = items
-            .filter((item): item is { item: TSpotifyTrack } => item.item.type === "track")
+            .filter((item): item is { item: TSpotifyTrack; } => item.item.type === "track")
             .map((item) => ({
                 ...item.item,
                 total_duration: 0

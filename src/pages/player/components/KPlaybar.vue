@@ -9,8 +9,9 @@
 
 <script setup lang="ts">
 
-import { computed, ref, watch } from "vue";
 import { useNow, whenever } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
+
 import { currentTrack, offlineNextTrack, progressMs, safeSyncQueue, syncKey, syncQueue } from "@/lib/spotify/player.ts";
 import { playerStore } from "@/pages/player/lib/store.ts";
 

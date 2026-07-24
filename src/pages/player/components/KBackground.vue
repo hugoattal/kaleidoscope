@@ -10,8 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useElementSize } from "@vueuse/core";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+
 import { animationLoop } from "@/pages/player/lib/animation.ts";
 import { backgroundColor, particleSpeed } from "@/pages/player/lib/store.ts";
 
@@ -104,7 +105,9 @@ function generateBokehs() {
 
 function updateBokehs(delta: number) {
     const speedMultiplier = Number(particleSpeed.value);
-    if (!Number.isFinite(speedMultiplier)) return;
+    if (!Number.isFinite(speedMultiplier)) {
+        return;
+    }
 
     const speed = BOKEH_SPEED * props.speed * delta * (60 / 1000) / wrapperBounding.height.value * speedMultiplier;
 
@@ -122,7 +125,9 @@ function updateBokehs(delta: number) {
 
 function drawBokehs() {
     const canvasElement = canvas.value;
-    if (!canvasElement) return;
+    if (!canvasElement) {
+        return;
+    }
 
     const width = wrapperBounding.width.value;
     const height = wrapperBounding.height.value;

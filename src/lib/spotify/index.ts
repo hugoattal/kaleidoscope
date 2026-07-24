@@ -1,5 +1,6 @@
-import { base64encode, generateRandomString, sha256 } from "./lib.ts";
 import { accessToken, authorizationState, codeVerifier, disconnect, refreshToken } from "@/lib/spotify/local.ts";
+
+import { base64encode, generateRandomString, sha256 } from "./lib.ts";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string;
 const redirectUri = getRedirectUri();

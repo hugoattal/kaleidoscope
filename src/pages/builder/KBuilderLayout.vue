@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import KMenu from "@/pages/builder/components/KMenu.vue";
-import KLayoutAnalyzer from "@/pages/builder/components/KLayoutAnalyzer.vue";
 import { EState, stateStore } from "@/lib/stores/state.ts";
+import KLayoutAnalyzer from "@/pages/builder/components/KLayoutAnalyzer.vue";
 import KLayoutMixer from "@/pages/builder/components/KLayoutMixer.vue";
+import KMenu from "@/pages/builder/components/KMenu.vue";
 </script>
 
 <style scoped>

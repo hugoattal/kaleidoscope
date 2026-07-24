@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { FButton } from "@ferris-wheel/design";
 import { onMounted } from "vue";
+
 import { getToken, requestAuthorization } from "@/lib/spotify";
 import { accessToken, disconnect } from "@/lib/spotify/local.ts";
 

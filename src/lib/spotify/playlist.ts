@@ -17,7 +17,7 @@ export async function saveToPlaylist(playlistId: string, tracks: Array<string>) 
 }
 
 export async function createPlaylist(name: string, tracks: Array<string>) {
-    const playlist = await spotifyApi<{ id: string }>("/me/playlists", {
+    const playlist = await spotifyApi<{ id: string; }>("/me/playlists", {
         body: JSON.stringify({ name: name || "KS Export" }),
         method: "POST"
     });

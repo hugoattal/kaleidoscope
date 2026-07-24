@@ -3,22 +3,22 @@ import { reactive } from "vue";
 export type TTrack = {
     id: string;
     name: string;
-    type: "track";
     album: {
-        release_date: string;
         images: Array<{
             url: string;
         }>;
+        release_date: string;
     };
     artists: Array<{
         name: string;
     }>;
     duration_ms: number;
     total_duration: number;
-}
+    type: "track";
+};
 
 export const store = reactive({
-    playlists: [] as Array<{id: string; name: string}>,
+    playlists: [] as Array<{ id: string; name: string; }>,
     selectedPlaylist: "",
     selectedPlaylists: [] as Array<string>,
     tracks: [] as Array<TTrack>

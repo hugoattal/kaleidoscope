@@ -46,10 +46,11 @@
 
 <script setup lang="ts">
 import { FButton } from "@ferris-wheel/design";
-import { store } from "@/lib/store.ts";
-import KTrack from "@/pages/builder/components/tracks/KTrack.vue";
+
 import { shuffle } from "@/lib/sort";
 import { createPlaylist, saveToPlaylist } from "@/lib/spotify/playlist.ts";
+import { store } from "@/lib/store.ts";
+import KTrack from "@/pages/builder/components/tracks/KTrack.vue";
 
 async function savePlaylist() {
     const trackIds = store.tracks.map((track) => track.id);

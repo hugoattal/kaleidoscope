@@ -1,4 +1,4 @@
-import {nextTracks} from "@/lib/spotify/player.ts";
+import { nextTracks } from "@/lib/spotify/player.ts";
 
 const imageHandles = new Map<string, HTMLImageElement>(); // Keep a reference to the images so that they are not garbage collected
 

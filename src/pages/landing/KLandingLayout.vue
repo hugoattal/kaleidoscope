@@ -15,8 +15,8 @@
 
 <script setup lang="ts">
 import { accessToken } from "@/lib/spotify/local.ts";
-import KSpotifyConnect from "@/pages/landing/components/KSpotifyConnect.vue";
 import KLandingMenu from "@/pages/landing/components/KLandingMenu.vue";
+import KSpotifyConnect from "@/pages/landing/components/KSpotifyConnect.vue";
 </script>
 
 <style scoped>

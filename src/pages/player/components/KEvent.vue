@@ -16,10 +16,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { TEvent } from "@/pages/player/lib/api.ts";
+
+import type { TEvent } from "@/pages/player/lib/api.ts";
 
 const props = defineProps<{
-    event: TEvent
+    event: TEvent;
 }>();
 
 const title = computed(() => {

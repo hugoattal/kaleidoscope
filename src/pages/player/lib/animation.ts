@@ -1,4 +1,4 @@
-export function animationLoop(callback: (delta: number) => void | Promise<void>, options: { fps?: number } = { }) {
+export function animationLoop(callback: (delta: number) => void | Promise<void>, options: { fps?: number; } = { }) {
     let animating = true;
     options.fps ??= 60;
 

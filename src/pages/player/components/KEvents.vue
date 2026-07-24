@@ -16,9 +16,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+
 import { displayEvents } from "@/lib/spotify/player.ts";
-import { TEvent } from "@/pages/player/lib/api.ts";
 import KEvent from "@/pages/player/components/KEvent.vue";
+import type { TEvent } from "@/pages/player/lib/api.ts";
 
 const events = ref<Array<TEvent>>([]);
 

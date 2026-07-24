@@ -3,15 +3,15 @@
 // `documentId`. Cf migration v4 → v5 (2026-06-13).
 export type TEvent = {
     id: number;
+    banner?: { url: string; } | null;
     documentId: string;
-    startAt: string;
     endAt: string;
-    titlePrefix: string;
-    titleSuffix: string;
-    banner?: { url: string } | null;
     eventType?: {
-        defaultBanner?: { url: string } | null;
+        defaultBanner?: { url: string; } | null;
         defaultTitlePrefix: string;
         defaultTitleSuffix: string;
     } | null;
-}
+    startAt: string;
+    titlePrefix: string;
+    titleSuffix: string;
+};

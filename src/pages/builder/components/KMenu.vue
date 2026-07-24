@@ -14,7 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { FButtonGroup, TIconOptions } from "@ferris-wheel/design";
+import type { TIconOptions } from "@ferris-wheel/design";
+import { FButtonGroup } from "@ferris-wheel/design";
+
 import { EState, stateStore } from "@/lib/stores/state.ts";
 
 const options: TIconOptions = [

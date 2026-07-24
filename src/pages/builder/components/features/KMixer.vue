@@ -57,9 +57,11 @@
 <script setup lang="ts">
 import { FBox, FButton, FCheckbox, FNumberInput, FSelect } from "@ferris-wheel/design";
 import { computed, ref } from "vue";
-import { store, TTrack } from "@/lib/store.ts";
-import { processTracks } from "@/lib/spotify/track.ts";
+
 import { getPlaylist } from "@/lib/spotify/cache.ts";
+import { processTracks } from "@/lib/spotify/track.ts";
+import type { TTrack } from "@/lib/store.ts";
+import { store } from "@/lib/store.ts";
 
 enum EMergeType {
     BackToBack = "BackToBack",
@@ -98,44 +100,43 @@ async function generate() {
     }
 
     switch (mergeType.value) {
-    case EMergeType.BackToBack: {
-        store.tracks = playlists.flat();
+        case EMergeType.BackToBack: {
+            store.tracks = playlists.flat();
 
-        if (removeDuplicates.value) {
-            const trackIds = new Set<string>();
-            store.tracks = store.tracks.filter((track) => {
-                if (trackIds.has(track.id)) {
-                    return false;
-                }
+            if (removeDuplicates.value) {
+                const trackIds = new Set<string>();
+                store.tracks = store.tracks.filter((track) => {
+                    if (trackIds.has(track.id)) {
+                        return false;
+                    }
 
-                trackIds.add(track.id);
-                return true;
-            });
+                    trackIds.add(track.id);
+                    return true;
+                });
+            }
         }
-    }
-        break;
-    case EMergeType.Interleaved: {
+            break;
+        case EMergeType.Interleaved: {
+            const maxLength = Math.max(...playlists.map((playlist) => playlist.length));
+            const trackIds = new Set<string>();
 
-        const maxLength = Math.max(...playlists.map((playlist) => playlist.length));
-        const trackIds = new Set<string>();
+            for (let i = 0; i < maxLength; i++) {
+                for (const playlist of playlists) {
+                    while (removeDuplicates.value && playlist[i] && trackIds.has(playlist[i].id)) {
+                        playlist.splice(i, 1);
+                    }
 
-        for (let i = 0; i < maxLength; i++) {
-            for (const playlist of playlists) {
-                while (removeDuplicates.value && playlist[i] && trackIds.has(playlist[i].id)) {
-                    playlist.splice(i, 1);
-                }
-
-                if (playlist[i]) {
-                    store.tracks.push(playlist[i]);
-                    trackIds.add(playlist[i].id);
+                    if (playlist[i]) {
+                        store.tracks.push(playlist[i]);
+                        trackIds.add(playlist[i].id);
+                    }
                 }
             }
         }
-    }
-        break;
-    case EMergeType.Progress: {
-        await generateProgress(playlists);
-    }
+            break;
+        case EMergeType.Progress: {
+            await generateProgress(playlists);
+        }
     }
 
     if (targetDuration.value > 0) {

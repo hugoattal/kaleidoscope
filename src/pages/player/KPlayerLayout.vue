@@ -17,12 +17,13 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import KBackground from "@/pages/player/components/KBackground.vue";
+
 import RockItLogo from "@/assets/rockit.svg";
 import { displayEvents, safeSyncQueue } from "@/lib/spotify/player.ts";
-import KTracklist from "@/pages/player/components/KTracklist.vue";
-import KPlayerMenu from "@/pages/player/components/KPlayerMenu.vue";
+import KBackground from "@/pages/player/components/KBackground.vue";
 import KEvents from "@/pages/player/components/KEvents.vue";
+import KPlayerMenu from "@/pages/player/components/KPlayerMenu.vue";
+import KTracklist from "@/pages/player/components/KTracklist.vue";
 
 onMounted(async () => {
     await safeSyncQueue();

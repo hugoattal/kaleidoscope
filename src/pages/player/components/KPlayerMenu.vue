@@ -33,7 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import { EElementType, FButton, FButtonGroup, TIconOptions } from "@ferris-wheel/design";
+import type { TIconOptions } from "@ferris-wheel/design";
+import { EElementType, FButton, FButtonGroup } from "@ferris-wheel/design";
+
 import { displayEvents, safeSyncQueue, syncing } from "@/lib/spotify/player.ts";
 import { backgroundColor, particleSpeed, playerStore } from "@/pages/player/lib/store.ts";
 

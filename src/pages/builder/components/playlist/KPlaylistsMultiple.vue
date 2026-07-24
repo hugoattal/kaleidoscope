@@ -41,9 +41,10 @@
 <script setup lang="ts">
 import { FBox, FButton, FTextInput } from "@ferris-wheel/design";
 import { computed, onMounted, ref } from "vue";
+
+import { getUserPlaylists } from "@/lib/spotify/cache.ts";
 import { store } from "@/lib/store.ts";
 import { localStore } from "@/lib/stores/local.ts";
-import { getUserPlaylists } from "@/lib/spotify/cache.ts";
 
 onMounted(async () => {
     store.playlists = await getUserPlaylists();

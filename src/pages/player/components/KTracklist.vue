@@ -46,15 +46,16 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+
 import { currentTrack, nextTracks, previousTracks } from "@/lib/spotify/player.ts";
-import { TTrack } from "@/lib/store.ts";
+import type { TTrack } from "@/lib/store.ts";
 import KPlaybar from "@/pages/player/components/KPlaybar.vue";
 
 const lastTrack = computed(() => previousTracks.value.toReversed().slice(0, 2));
 const comingTracks = computed(() => nextTracks.value.slice(0, 6));
 
 const tracks = computed(() => {
-    const result: Array<{ id: string; type: string; data: TTrack; position: number }> = [];
+    const result: Array<{ id: string; data: TTrack; position: number; type: string; }> = [];
     const ids = new Set<string>();
 
     function getId(id: string) {
@@ -69,36 +70,36 @@ const tracks = computed(() => {
     if (lastTrack.value[0]) {
         result.push({
             id: getId(lastTrack.value[0].id),
-            type: "last",
             data: lastTrack.value[0],
-            position: -2
+            position: -2,
+            type: "last"
         });
     }
 
     if (lastTrack.value[1]) {
         result.push({
             id: getId(lastTrack.value[1].id),
-            type: "last",
             data: lastTrack.value[1],
-            position: -1
+            position: -1,
+            type: "last"
         });
     }
 
     if (currentTrack.value) {
         result.push({
             id: getId(currentTrack.value.id),
-            type: "current",
             data: currentTrack.value,
-            position: 0
+            position: 0,
+            type: "current"
         });
     }
 
     for (const [index, track] of comingTracks.value.entries()) {
         result.push({
             id: getId(track.id),
-            type: "next",
             data: track,
-            position: index + 1
+            position: index + 1,
+            type: "next"
         });
     }
 

@@ -77,10 +77,12 @@
 <script setup lang="ts">
 import { FIcon } from "@ferris-wheel/design";
 import { ref } from "vue";
-import KPercentageDisplay from "@/pages/builder/components/form/KPercentageDisplay.vue";
-import { computeTotalDuration, moveStore, store, TTrack } from "@/lib/store.ts";
 
-type TDropInsertion = "before" | "after" ;
+import type { TTrack } from "@/lib/store.ts";
+import { computeTotalDuration, moveStore, store } from "@/lib/store.ts";
+import KPercentageDisplay from "@/pages/builder/components/form/KPercentageDisplay.vue";
+
+type TDropInsertion = "before" | "after";
 
 const props = defineProps<{
     index: number;
