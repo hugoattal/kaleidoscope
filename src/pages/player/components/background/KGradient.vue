@@ -1,9 +1,19 @@
 <template>
     <div
         aria-hidden="true"
-        class="gradient"
+        :class="[
+            'gradient',
+            {
+                'gradient--normal': backgroundColor === '#1c0b0b',
+                'gradient--darker': backgroundColor === '#000000'
+            }
+        ]"
     />
 </template>
+
+<script setup lang="ts">
+import { backgroundColor } from "@/pages/player/lib/store.ts";
+</script>
 
 <style scoped>
 .gradient {
@@ -11,12 +21,29 @@
   --gradient-amber: rgb(181 53 4 / 85%);
   --gradient-copper: rgb(111 30 3 / 65%);
   --gradient-glow: rgb(134 41 6 / 55%);
+  --gradient-secondary: rgb(77 19 2 / 35%);
 
   position: absolute;
   inset: 0;
   overflow: hidden;
   isolation: isolate;
   background: var(--gradient-base);
+
+  &.gradient--normal {
+    --gradient-base: #080301;
+    --gradient-amber: rgb(198 62 8 / 88%);
+    --gradient-copper: rgb(126 36 6 / 70%);
+    --gradient-glow: rgb(150 48 10 / 60%);
+    --gradient-secondary: rgb(88 24 4 / 40%);
+  }
+
+  &.gradient--darker {
+    --gradient-base: #010000;
+    --gradient-amber: rgb(165 46 3 / 80%);
+    --gradient-copper: rgb(96 25 2 / 58%);
+    --gradient-glow: rgb(116 34 4 / 48%);
+    --gradient-secondary: rgb(64 15 1 / 30%);
+  }
 
   &::before,
   &::after {
@@ -47,7 +74,7 @@
     background:
       radial-gradient(
         ellipse at 48% 42%,
-        rgb(77 19 2 / 35%) 0,
+        var(--gradient-secondary) 0,
         transparent 48%
       );
     filter: blur(30px);

@@ -159,12 +159,13 @@ function displayTime(time: number): string {
 
     .section-title {
         grid-column: 1 / -1;
-        color: var(--fw-color-content-deep);
-        font-size: 18px;
+        font-size: var(--fw-font-size-m);
         font-weight: bold;
+        color: var(--fw-color-primary-lite);
         transition:
             opacity 0.5s ease,
             transform 0.5s ease;
+        text-shadow: 0 0 16px var(--fw-color-background);
     }
 
     .track {
@@ -185,7 +186,7 @@ function displayTime(time: number): string {
 
         &.current {
             grid-column: span 2;
-            box-shadow: 0 0 16px var(--fw-color-primary-deepest);
+            box-shadow: 0 0 32px var(--fw-color-primary-deepest);
         }
 
         &.list-leave-active {
@@ -251,6 +252,7 @@ function displayTime(time: number): string {
             color: var(--fw-color-background-deepest);
             font-size: var(--fw-font-size-m);
             font-weight: bold;
+            opacity: 0.5;
         }
 
         .cover {
