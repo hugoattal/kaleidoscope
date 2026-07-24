@@ -66,7 +66,7 @@ function randomSize() {
 }
 
 function randomOpacity() {
-    return Math.random() ** 6 + 0.1;
+    return Math.random() ** 5 + 0.1;
 }
 
 function createBokehSprite() {
@@ -80,7 +80,7 @@ function createBokehSprite() {
     gradient.addColorStop(0, "rgba(255, 108, 18, 0.95)");
     gradient.addColorStop(0.52, "rgba(255, 104, 14, 0.97)");
     gradient.addColorStop(0.68, "rgba(255, 90, 6, 1)");
-    gradient.addColorStop(0.8, "rgba(248, 72, 2, 0.6)");
+    gradient.addColorStop(0.8, "rgba(248, 72, 2, 0.3)");
     gradient.addColorStop(0.92, "rgba(218, 42, 0, 0.1)");
     gradient.addColorStop(1, "rgba(160, 24, 0, 0)");
 

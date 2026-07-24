@@ -51,11 +51,18 @@ import { currentTrack, nextTracks, previousTracks } from "@/lib/spotify/player.t
 import type { TTrack } from "@/lib/store.ts";
 import KPlaybar from "@/pages/player/components/KPlaybar.vue";
 
-const lastTrack = computed(() => previousTracks.value.toReversed().slice(0, 2));
+type TTracklistItem = {
+    id: string;
+    data: TTrack;
+    position: number;
+    type: "last" | "current" | "next";
+};
+
+const lastTracks = computed(() => previousTracks.value.slice(-2));
 const comingTracks = computed(() => nextTracks.value.slice(0, 6));
 
-const tracks = computed(() => {
-    const result: Array<{ id: string; data: TTrack; position: number; type: string; }> = [];
+const tracks = computed<Array<TTracklistItem>>(() => {
+    const result: Array<TTracklistItem> = [];
     const ids = new Set<string>();
 
     function getId(id: string) {
@@ -67,40 +74,25 @@ const tracks = computed(() => {
         return getId(`${ id }x`);
     }
 
-    if (lastTrack.value[0]) {
+    function addTrack(data: TTrack, position: number, type: TTracklistItem["type"]) {
         result.push({
-            id: getId(lastTrack.value[0].id),
-            data: lastTrack.value[0],
-            position: -2,
-            type: "last"
+            id: getId(data.id),
+            data,
+            position,
+            type
         });
     }
 
-    if (lastTrack.value[1]) {
-        result.push({
-            id: getId(lastTrack.value[1].id),
-            data: lastTrack.value[1],
-            position: -1,
-            type: "last"
-        });
+    for (const [index, track] of lastTracks.value.entries()) {
+        addTrack(track, index - lastTracks.value.length, "last");
     }
 
     if (currentTrack.value) {
-        result.push({
-            id: getId(currentTrack.value.id),
-            data: currentTrack.value,
-            position: 0,
-            type: "current"
-        });
+        addTrack(currentTrack.value, 0, "current");
     }
 
     for (const [index, track] of comingTracks.value.entries()) {
-        result.push({
-            id: getId(track.id),
-            data: track,
-            position: index + 1,
-            type: "next"
-        });
+        addTrack(track, index + 1, "next");
     }
 
     return result;
@@ -115,6 +107,11 @@ function displayTime(time: number): string {
 
 <style scoped>
 .tracklist-wrapper {
+    --track-background: color-mix(in srgb, var(--fw-color-background-deepest) 53%, transparent);
+    --track-background-muted: color-mix(in srgb, var(--fw-color-background-deepest) 27%, transparent);
+    --track-border: color-mix(in srgb, var(--fw-color-primary) 33%, transparent);
+    --track-shadow: color-mix(in srgb, var(--fw-color-background-deepest) 53%, transparent);
+
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -137,14 +134,18 @@ function displayTime(time: number): string {
         display: flex;
         column-gap: var(--fw-length-m);
         backdrop-filter: blur(16px);
-        background: #1c0b0b88;
+        background: var(--track-background);
         padding: var(--fw-length-m);
         border-radius: var(--fw-length-xl);
-        width: 100%;
-        box-shadow: 0 8px 16px #13050588;
+        box-shadow: 0 8px 16px var(--track-shadow);
         position: relative;
-        transition: all 0.5s ease;
-        border: 1px solid #f2920055;
+        transition:
+            background-color 0.5s ease,
+            border-color 0.5s ease,
+            border-radius 0.5s ease,
+            opacity 0.5s ease,
+            transform 0.5s ease;
+        border: 1px solid var(--track-border);
         overflow: hidden;
 
         &.list-leave-active {
@@ -156,10 +157,13 @@ function displayTime(time: number): string {
             flex: 1 1 auto;
             flex-direction: column;
             gap: var(--fw-length-s);
+            transition: opacity 0.5s ease;
         }
 
         .artist, .title {
-            transition: all 0.5s ease;
+            transition:
+                color 0.5s ease,
+                font-size 0.5s ease;
             white-space: nowrap;
         }
 
@@ -181,13 +185,17 @@ function displayTime(time: number): string {
 
         .cover {
             flex: 0 0 128px;
-            transition: all 0.5s ease;
+            transition:
+                flex-basis 0.5s ease,
+                height 0.5s ease,
+                opacity 0.5s ease,
+                width 0.5s ease;
             width: 128px;
             height: 128px;
             position: relative;
 
             img {
-                transition: all 0.5s ease;
+                transition: border-radius 0.5s ease;
                 border-radius: var(--fw-radius-l);
                 width: 100%;
             }
@@ -207,10 +215,8 @@ function displayTime(time: number): string {
     }
 
     .next, .last {
-        width: 100%;
         border-radius: var(--fw-length-l);
-        background: #1c0b0b44;
-        grid-template-columns: 48px 1fr;
+        background: var(--track-background-muted);
         border-color: var(--fw-color-content-softest);
 
         .content {

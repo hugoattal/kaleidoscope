@@ -8,25 +8,29 @@
 </template>
 
 <script setup lang="ts">
-
-import { useNow, whenever } from "@vueuse/core";
+import { useIntervalFn, useNow, whenever } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 
-import { currentTrack, offlineNextTrack, progressMs, safeSyncQueue, syncKey, syncQueue } from "@/lib/spotify/player.ts";
+import { currentTrack, isPlaying, offlineNextTrack, progressMs, safeSyncQueue, syncKey } from "@/lib/spotify/player.ts";
 import { playerStore } from "@/pages/player/lib/store.ts";
 
 const currentProgressMs = ref(0);
 const startWatch = ref(0);
+const now = useNow({
+    scheduler: (update) => useIntervalFn(update, 1000)
+});
 
-watch(() => [progressMs.value, currentTrack.value, syncKey.value], () => {
+watch(() => [progressMs.value, currentTrack.value, isPlaying.value, syncKey.value], () => {
     currentProgressMs.value = progressMs.value;
     startWatch.value = Date.now();
 }, { immediate: true });
 
-const remaining = computed(() => {
-    const now = useNow({ interval: 1000 });
-    return currentTrack.value!.duration_ms - (currentProgressMs.value + (now.value - startWatch.value));
+const currentProgress = computed(() => {
+    const elapsed = isPlaying.value ? now.value.getTime() - startWatch.value : 0;
+    return currentProgressMs.value + elapsed;
 });
+
+const remaining = computed(() => currentTrack.value!.duration_ms - currentProgress.value);
 
 const remainingDisplay = computed(() => {
     const safeRemaining = Math.max(remaining.value, 0);
@@ -36,12 +40,18 @@ const remainingDisplay = computed(() => {
 });
 
 const cursorWidth = computed(() => {
-    const now = useNow({ interval: 1000 });
-    const progress = currentProgressMs.value + (now.value - startWatch.value);
-    return `${ (progress / currentTrack.value!.duration_ms) * 100 }%`;
+    return `${ (currentProgress.value / currentTrack.value!.duration_ms) * 100 }%`;
 });
 
-whenever(() => remaining.value <= 0, async () => {
+whenever(() => isPlaying.value && remaining.value <= 0, syncEndedTrack);
+
+async function syncEndedTrack() {
+    const currentTrackId = currentTrack.value?.id;
+
+    if (!currentTrackId) {
+        return;
+    }
+
     if (playerStore.offline) {
         offlineNextTrack();
         await sleep(1000);
@@ -49,23 +59,17 @@ whenever(() => remaining.value <= 0, async () => {
         return;
     }
 
-    const currentTrackId = currentTrack.value!.id;
-
     for (let tryCount = 0; tryCount < 5; tryCount++) {
         await sleep(1000);
-        try {
-            await safeSyncQueue();
-            if (currentTrack.value!.id !== currentTrackId) {
-                return;
-            }
-        }
-        catch (error) {
-            console.warn("Failed to sync queue, retrying in 1s", error);
+        await safeSyncQueue();
+
+        if (currentTrack.value?.id !== currentTrackId) {
+            return;
         }
     }
-});
+}
 
-async function sleep(time = 1000) {
+async function sleep(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 </script>

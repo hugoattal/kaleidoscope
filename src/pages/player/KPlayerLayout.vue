@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { useIntervalFn } from "@vueuse/core";
 
 import RockItLogo from "@/assets/rockit.svg";
 import { displayEvents, safeSyncQueue } from "@/lib/spotify/player.ts";
@@ -25,8 +25,8 @@ import KEvents from "@/pages/player/components/KEvents.vue";
 import KPlayerMenu from "@/pages/player/components/KPlayerMenu.vue";
 import KTracklist from "@/pages/player/components/KTracklist.vue";
 
-onMounted(async () => {
-    await safeSyncQueue();
+useIntervalFn(safeSyncQueue, 5000, {
+    immediateCallback: true
 });
 </script>
 
